@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,8 +24,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../frontend/images')  # frontend/images 경
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('django-insecure-ptpax%zxtg)bs(hw)n3u8ufb30xfr#k+_-qjv@*n1s$5si_gk8')
+# SECRET_KEY = os.environ.get('django-insecure-ptpax%zxtg)bs(hw)n3u8ufb30xfr#k+_-qjv@*n1s$5si_gk8')
+env = environ.Env(
+    # 기본값 설정, 필수
+    DEBUG=(bool, False)
+)
 
+# 대신 이렇게 변경
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
