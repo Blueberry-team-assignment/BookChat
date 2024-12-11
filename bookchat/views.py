@@ -12,5 +12,5 @@ def helloAPI(request):
 def randomBook(request, id):
     totalBooks = Book.objects.all()
     randomBooks = random.sample(list(totalBooks), id)
-    serializer = QuizSerializer(randomBooks, many=True)
+    serializer = BookSerializer(randomBooks, many=True)
     return Response(serializer.data)
