@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bookchat',
-    'rest_framework'
+    'rest_framework',
     'cloudinary_storage',
     'cloudinary',
 ]
