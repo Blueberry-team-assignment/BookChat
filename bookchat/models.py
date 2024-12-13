@@ -10,5 +10,5 @@ class Book(models.Model):
 
     def get_poster_url(self):
         if self.poster:
-            return f"{settings.MEDIA_URL}{self.poster}"
+            return self.poster.url  # Cloudinary URL 반환
         return None
