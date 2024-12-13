@@ -10,8 +10,9 @@ def helloAPI(request):
 
 @api_view(['GET'])
 def randomBook(request, id):
-    book = Book.objects.get(id=id)
-    serializer = BookSerializer(book)
+    totalBooks = Book.objects.all()
+    randomBooks = random.sample(list(totalBooks), id)
+    serializer = BookSerializer(randomBooks, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
