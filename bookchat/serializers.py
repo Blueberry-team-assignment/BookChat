@@ -5,7 +5,7 @@ class BookSerializer(serializers.ModelSerializer):
     poster_url = serializers.SerializerMethodField()  
     class Meta:
         model = Book 
-        fields = ('title', 'keyword', 'poster_url', 'like')
+        fields = ('title', 'keyword', 'poster', 'like')
     
     def get_poster_url(self, obj):
         if obj.poster:
