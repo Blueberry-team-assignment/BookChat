@@ -56,6 +56,7 @@ def get_memo(request, book_id):
                 'content': memo.content,
                 'updated_at': memo.updated_at
             })
+        print("get memo: ", memo, flush=True)
         return Response({'content': ''})  # 메모가 없는 경우 빈 내용 반환
     except Exception as e:
         return Response({'error': str(e)}, status=500)
