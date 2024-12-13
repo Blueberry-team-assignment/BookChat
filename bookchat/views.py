@@ -32,16 +32,20 @@ def save_memo(request):
 
         # BookMemo 생성 시도
         try:
-            memo = BookMemo.objects.create(
-                book=book,
-                content=content
+            memo, created = BookMemo.objects.update_or_create(
+            book=book,  # 이 조건으로 찾고
+            defaults={'content': content}  # 없으면 생성, 있으면 업데이트
             )
             print(f"Successfully created memo: {memo.id}", flush=True)
+
         except Exception as e:
             print(f"Error creating memo: {str(e)}", flush=True)
             return Response({'error': str(e)}, status=500)
 
-        return Response({'message': 'Memo saved successfully'})
+        return Response({
+            'message': 'Memo saved successfully',
+            'created': created  # 새로 생성됐는지 여부
+        })
 
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
