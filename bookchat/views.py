@@ -17,9 +17,10 @@ def randomBook(request, id):
 
 @api_view(['POST'])
 def save_memo(request):
+    print("Received request.data:", request.data, flush=True) 
     book_id = request.data.get('book_id')
     content = request.data.get('content')
-    
+    print("book id: ", book_id, "content: ", content, flush=True)
     try:
         book = Book.objects.get(id=book_id)
         memo, created = BookMemo.objects.update_or_create(
