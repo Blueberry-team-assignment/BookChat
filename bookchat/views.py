@@ -47,6 +47,18 @@ def save_memo(request):
         print(f"Unexpected error: {str(e)}")
         return Response({'error': str(e)}, status=500)
 
+@api_view(['GET'])
+def get_memo(request, book_id):
+    try:
+        memo = BookMemo.objects.filter(book_id=book_id).first()
+        if memo:
+            return Response({
+                'content': memo.content,
+                'updated_at': memo.updated_at
+            })
+        return Response({'content': ''})  # 메모가 없는 경우 빈 내용 반환
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 ####################################
 @api_view(['POST'])
