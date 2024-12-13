@@ -14,3 +14,11 @@ def randomBook(request, id):
     randomBooks = random.sample(list(totalBooks), id)
     serializer = BookSerializer(randomBooks, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def create_book(request):
+    serializer = BookSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)

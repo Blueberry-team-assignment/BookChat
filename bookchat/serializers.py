@@ -6,11 +6,3 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book 
         fields = ('title', 'keyword', 'poster', 'like')
-    
-    def get_poster_url(self, obj):
-        if obj.poster:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.poster.url)
-            return obj.poster.url
-        return None
