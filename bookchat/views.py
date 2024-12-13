@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Book
+from .models import Book, BookMemo
 from .serializers import BookSerializer
 import random 
 
