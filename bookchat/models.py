@@ -12,3 +12,9 @@ class Book(models.Model):
         if self.poster:
             return self.poster.url  # Cloudinary URL 반환
         return None
+
+class BookMemo(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

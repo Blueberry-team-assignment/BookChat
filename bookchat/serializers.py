@@ -6,7 +6,7 @@ class BookSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Book 
-        fields = ('title', 'keyword', 'poster_url', 'like')  # id 필드 추가
+        fields = ('id', 'title', 'keyword', 'poster_url', 'like')  # id 필드 추가
         
     def get_poster_url(self, obj):
         return obj.get_poster_url()

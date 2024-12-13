@@ -16,6 +16,23 @@ def randomBook(request, id):
     return Response(serializer.data)
 
 @api_view(['POST'])
+def save_memo(request):
+    book_id = request.data.get('book_id')
+    content = request.data.get('content')
+    
+    try:
+        book = Book.objects.get(id=book_id)
+        memo, created = BookMemo.objects.update_or_create(
+            book=book,
+            defaults={'content': content}
+        )
+        return Response({'message': 'Memo saved successfully'})
+    except Book.DoesNotExist:
+        return Response({'error': 'Book not found'}, status=404)
+
+
+####################################
+@api_view(['POST'])
 def create_book(request):
     print("Received request to create a book.")  # 이 줄이 로그에 기록됩니다.
     serializer = BookSerializer(data=request.data)
