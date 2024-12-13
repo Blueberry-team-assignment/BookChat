@@ -17,19 +17,35 @@ def randomBook(request, id):
 
 @api_view(['POST'])
 def save_memo(request):
-    print("Received request.data:", request.data, flush=True) 
-    book_id = request.data.get('book_id')
-    content = request.data.get('content')
-    print("book id: ", book_id, "content: ", content, flush=True)
     try:
-        book = Book.objects.get(id=book_id)
-        memo, created = BookMemo.objects.update_or_create(
-            book=book,
-            defaults={'content': content}
-        )
+        print("Received request.data:", request.data, flush=True)
+        book_id = request.data.get('book_id')
+        content = request.data.get('content')
+        print("book id: ", book_id, "content: ", content, flush=True)
+
+        # Book 객체 가져오기 시도
+        try:
+            book = Book.objects.get(id=book_id)
+        except Book.DoesNotExist:
+            print(f"Book with id {book_id} not found", flush=True)
+            return Response({'error': 'Book not found'}, status=404)
+
+        # BookMemo 생성 시도
+        try:
+            memo = BookMemo.objects.create(
+                book=book,
+                content=content
+            )
+            print(f"Successfully created memo: {memo.id}", flush=True)
+        except Exception as e:
+            print(f"Error creating memo: {str(e)}", flush=True)
+            return Response({'error': str(e)}, status=500)
+
         return Response({'message': 'Memo saved successfully'})
-    except Book.DoesNotExist:
-        return Response({'error': 'Book not found'}, status=404)
+
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return Response({'error': str(e)}, status=500)
 
 
 ####################################
