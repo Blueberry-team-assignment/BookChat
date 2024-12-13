@@ -17,8 +17,11 @@ def randomBook(request, id):
 
 @api_view(['POST'])
 def create_book(request):
+    print("Received request to create a book.")  # 이 줄이 로그에 기록됩니다.
     serializer = BookSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
+        print(f"Book created: {serializer.data}")  # 이 줄도 로그에 기록됩니다.
         return Response(serializer.data, status=201)
+    print(f"Book creation failed: {serializer.errors}")  # 이 줄도 로그에 기록됩니다.
     return Response(serializer.errors, status=400)
