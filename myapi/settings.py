@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'model_utils',
     'rest_framework',
     'df_api_drf',
-    #'channels', 
+    'channels', 
     'df_chat',
     'bookchat',
     'cloudinary_storage',

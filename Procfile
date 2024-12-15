@@ -1,1 +1,1 @@
-web: gunicorn myapi.wsgi:application
+web: uvicorn myapi.asgi:application --host=0.0.0.0 --port=$PORT
