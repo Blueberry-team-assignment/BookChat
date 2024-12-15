@@ -49,14 +49,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bookchat',
+    'model_utils',
     'rest_framework',
-    'cloudinary_storage',
-    'cloudinary',
     'df_api_drf',
     'channels', 
     'df_chat',
+    'bookchat',
+    'cloudinary_storage',
     'corsheaders',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
