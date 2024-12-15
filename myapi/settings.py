@@ -53,6 +53,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'cloudinary_storage',
     'cloudinary',
+    'channels', 
+    'df_api_drf',
+    'df_chat',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'myapi.urls'
@@ -85,11 +90,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myapi.wsgi.application'
+ASGI_APPLICATION = 'myapi.asgi.application' #채팅 서버 
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+if 'DATABASE_URL' not in os.environ:
+    os.environ['DATABASE_URL'] = 'sqlite:////' + str(BASE_DIR / 'db.sqlite3')
+    
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -152,3 +160,8 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
