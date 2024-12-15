@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'cloudinary_storage',
     'cloudinary',
-    'channels', 
     'df_api_drf',
+    'channels', 
     'df_chat',
     'corsheaders',
 ]
@@ -159,6 +159,7 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+SPLIT_MARKER = '<!-- split -->'
 
 
 # development/production 환경 분리
