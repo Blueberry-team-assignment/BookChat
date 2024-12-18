@@ -7,6 +7,7 @@ class Book(models.Model):
     keyword=models.CharField(max_length=255)
     poster= models.ImageField()
     like = models.BooleanField(default=False)
+    description = models.TextField(blank=True, null=True)  # 새로운 필드 추가
 
     def get_poster_url(self):
         if self.poster:
