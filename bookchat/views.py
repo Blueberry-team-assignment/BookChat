@@ -76,6 +76,17 @@ def get_memo(request, book_id):
         return Response({'error': str(e)}, status=500)
 
 
+@api_view(['POST'])
+def change_mylist(request):
+    try:
+        book_id = request.data.get('book_id')
+        book = Book.objects.get(id=book_id)
+        book.like = not book.like
+        book.save()
+        return Response({'success': True, 'like': book.like})
+    except Book.DoesNotExist:
+        return Response({'success': False, 'error': 'Book not found'}, status=404)
+
 
 ####################################
 @api_view(['POST'])
