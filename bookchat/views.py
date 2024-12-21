@@ -5,18 +5,25 @@ from .serializers import BookSerializer
 import random 
 
 @api_view(['GET'])
-def helloAPI(request):
+def helloAPI():
     return Response("hello world!")
 
 @api_view(['GET'])
-def randomBook(request, id):
+def randomBook(id):
     totalBooks = Book.objects.all()
     randomBooks = random.sample(list(totalBooks), id)
     serializer = BookSerializer(randomBooks, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-def allBooks(request):
+def randomBook_myList():
+    myListBooks = Book.objects.filter(like=True)
+    randomBooks = random.sample(list(myListBooks), 4)
+    serializer = BookSerializer(randomBooks, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def allBooks():
     totalBooks = Book.objects.all()
     serializer = BookSerializer(totalBooks, many=True)
     return Response(serializer.data)
@@ -62,7 +69,7 @@ def save_memo(request):
         return Response({'error': str(e)}, status=500)
 
 @api_view(['GET'])
-def get_memo(request, book_id):
+def get_memo(book_id):
     try:
         memo = BookMemo.objects.filter(book_id=book_id).first()
         if memo:
