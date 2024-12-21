@@ -18,7 +18,8 @@ def randomBook(request, id):
 @api_view(['GET'])
 def randomBook_myList(request):
     myListBooks = Book.objects.filter(like=True)
-    randomBooks = random.sample(list(myListBooks), 4)
+    sample_size = min(len(myListBooks), 4)
+    randomBooks = random.sample(list(myListBooks), sample_size)
     serializer = BookSerializer(randomBooks, many=True)
     return Response(serializer.data)
 
