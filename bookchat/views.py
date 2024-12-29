@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
+from bookchat.models import User  #
 
 @api_view(['GET'])
 def helloAPI(request):
