@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Book(models.Model):
@@ -19,3 +19,12 @@ class BookMemo(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class User(AbstractUser):
+    name = models.CharField(max_length=100)
+    id = models.CharField(unique=True, primary_key=True, max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']

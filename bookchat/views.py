@@ -1,8 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Book, BookMemo
-from .serializers import BookSerializer
+from .serializers import BookSerializer, UserSerializer, LoginSerializer
 import random 
+from django.contrib.auth import authenticate
+from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 @api_view(['GET'])
 def helloAPI(request):
@@ -94,6 +97,29 @@ def change_mylist(request):
         return Response({'success': True, 'like': book.like})
     except Book.DoesNotExist:
         return Response({'success': False, 'error': 'Book not found'}, status=404)
+
+@api_view(['POST'])
+def login(request):
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        user = authenticate(
+            email=serializer.validated_data['email'],
+            password=serializer.validated_data['password']
+        )
+        
+        if user:
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'user': UserSerializer(user).data
+            })
+        
+        return Response(
+            {'error': '잘못된 이메일이나 비밀번호입니다.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 ####################################

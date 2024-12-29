@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'model_utils',
     'rest_framework',
+    'rest_framework.authtoken',
     'df_api_drf',
     'channels', 
     'df_chat',
@@ -59,6 +60,15 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+AUTH_USER_MODEL = 'bookchat.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
