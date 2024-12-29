@@ -35,7 +35,8 @@ env = environ.Env(
 # 대신 이렇게 변경
 SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -159,9 +160,11 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_URL='/static/'
-STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dwt4yri9e',
