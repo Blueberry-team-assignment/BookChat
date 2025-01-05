@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import helloAPI, randomBook, save_memo, get_memo, allBooks, change_mylist, randomBook_myList, login, get_users
+from .views import helloAPI, randomBook, save_memo, get_memo, allBooks, change_mylist, randomBook_myList, login, get_users, get_user_info
 
 urlpatterns = [
     path("hello/", helloAPI),
@@ -11,4 +11,5 @@ urlpatterns = [
     path("myList/", randomBook_myList),
     path('login/', login),
     path('users/', get_users),
+    path('user/', get_user_info),
 ]

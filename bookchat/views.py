@@ -130,6 +130,12 @@ def get_users(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_info(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
 ####################################
 @api_view(['POST'])
 def create_book(request):
