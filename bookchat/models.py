@@ -33,7 +33,7 @@ class ChatRoom(models.Model):
     name = models.CharField(max_length=100)
     book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name='chat_rooms')
     created_at = models.DateTimeField(auto_now_add=True)
-    participants = models.ManyToManyField('User', related_name='chat_rooms')
+    participants = models.ManyToManyField('User', related_name='book_chat_rooms')
 
     class Meta:
         ordering = ['-created_at']
@@ -51,8 +51,8 @@ class ChatRoom(models.Model):
         }
 
 class ChatMessage(models.Model):
-    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey('User', on_delete=models.CASCADE)
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='book_messages')
+    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='book_chat_messages')  # related_name 추가
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     
