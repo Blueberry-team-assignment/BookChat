@@ -62,9 +62,18 @@ INSTALLED_APPS = [
     'cloudinary',
 ]
 
+DJANGOFLOW_CHAT_SETTINGS = {
+    'USER_SERIALIZER': 'bookchat.serializers.ChatUserSerializer',
+    'USE_CHAT_GROUPS': True,
+    'USE_TYPING_EVENTS': True,
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
