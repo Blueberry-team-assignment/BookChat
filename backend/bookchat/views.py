@@ -102,12 +102,15 @@ def change_mylist(request):
 
 @api_view(['POST'])
 def login(request):
+    print("Login request data:", request.data)  # 요청 데이터 로깅
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
+        print("Serializer valid:", serializer.validated_data)  # 유효성 검사 통과 데이터
         user = authenticate(
             email=serializer.validated_data['email'],
             password=serializer.validated_data['password']
         )
+        print("Authenticated user:", user)  
         
         if user:
             token, _ = Token.objects.get_or_create(user=user)
@@ -121,6 +124,7 @@ def login(request):
             status=status.HTTP_401_UNAUTHORIZED
         )
     
+    print("Serializer errors:", serializer.errors)  # 유효성 검사 오류
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])

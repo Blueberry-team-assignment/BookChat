@@ -1,0 +1,1 @@
+ /Users/haerinkim/StudioProjects/book_chat/frontend/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/native_assets.yaml: 
