@@ -62,24 +62,10 @@ INSTALLED_APPS = [
     'cloudinary',
 ]
 
-# Django-df-chat 설정
-DF_CHAT = {
-    'USE_PERMISSIONS': True,
-    'DEFAULT_ROOM_TYPE': 'private',
-    'DEFAULT_ROOM_NAME': 'Chat Room',
-    'MESSAGE_MODEL': 'df_chat.Message',
-    'ROOM_MODEL': 'df_chat.Room',
-    'USER_MODEL': 'bookchat.User',  # 여기서는 커스텀 User 모델을 사용하고 있으므로
-}
-
-# URL 설정 추가 (이미 되어있을 수 있음)
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
 }
 
 AUTH_USER_MODEL = 'bookchat.User'

@@ -8,36 +8,53 @@ class ChatService {
   WebSocketChannel? _channel;
   Function(ChatMessage)? onMessageReceived;
 
+  // lib/common/service/chat_service.dart
   Future<void> connectToChat(int roomId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
-    
+
     if (token == null) {
       throw Exception('Authentication token not found');
     }
 
     final wsUrl = Uri.parse(
-      'wss://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/ws/chat/$roomId/?token=$token'
+        'wss://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/ws/chat/$roomId/?token=$token'
     );
-    _channel = WebSocketChannel.connect(wsUrl);
+    print('Connecting to WebSocket URL: $wsUrl');
 
-    _channel?.stream.listen(
-      (message) {
-        final data = jsonDecode(message);
-        if (data['message'] != null) {
-          final chatMessage = ChatMessage.fromJson(data);
-          onMessageReceived?.call(chatMessage);
-        }
-      },
-      onError: (error) {
-        print('WebSocket error: $error');
-        reconnect(roomId);
-      },
-      onDone: () {
-        print('WebSocket connection closed');
-        reconnect(roomId);
-      },
-    );
+    try {
+      _channel = WebSocketChannel.connect(wsUrl);
+      print('WebSocket connection established');
+
+      _channel?.stream.listen(
+            (message) {
+          print('Raw WebSocket message received: $message');
+          try {
+            final data = jsonDecode(message);
+            print('Decoded message: $data');  // 디코딩된 메시지 출력
+            if (data['message'] != null) {
+              final chatMessage = ChatMessage.fromJson(data);
+              onMessageReceived?.call(chatMessage);
+            }
+          } catch (e) {
+            print('Error processing message: $e');
+          }
+        },
+        onError: (error) {
+          print('WebSocket error details: ${error.toString()}');  // 상세 에러 출력
+          if (!error.toString().contains('Connection closed')) {  // 의도적 종료가 아닌 경우만 재연결
+            reconnect(roomId);
+          }
+        },
+        onDone: () {
+          print('WebSocket connection closed normally');
+          // reconnect(roomId);  // 일단 자동 재연결 비활성화
+        },
+      );
+    } catch (e) {
+      print('Error establishing WebSocket connection: ${e.toString()}');
+      throw e;
+    }
   }
 
   void sendMessage(String content, String senderId) {

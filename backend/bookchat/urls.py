@@ -1,5 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 from .views import helloAPI, randomBook, save_memo, get_memo, allBooks, change_mylist, randomBook_myList, login, get_users, get_user_info
+from . import views
+from rest_framework.routers import DefaultRouter  # 이 줄 추가
+
+router = DefaultRouter()
+router.register(r'rooms', views.CustomRoomViewSet, basename='chat_room')
 
 urlpatterns = [
     path("hello/", helloAPI),
@@ -12,4 +17,5 @@ urlpatterns = [
     path('login/', login),
     path('users/', get_users),
     path('user/', get_user_info),
+    path('api/v1/chat/', include(router.urls)),
 ]

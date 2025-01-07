@@ -8,6 +8,19 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from bookchat.models import User  #
+from df_chat.drf.viewsets import RoomViewSet
+from rest_framework.authentication import TokenAuthentication
+
+class CustomRoomViewSet(RoomViewSet):
+    authentication_classes = [TokenAuthentication]
+
+    def create(self, request, *args, **kwargs):
+        print("Received data:", request.data)  # 요청 데이터 출력
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            print("Error:", str(e))  # 에러 출력
+            raise
 
 @api_view(['GET'])
 def helloAPI(request):

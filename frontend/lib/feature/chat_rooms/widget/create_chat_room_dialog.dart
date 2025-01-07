@@ -41,27 +41,31 @@ class _CreateChatRoomDialogState extends State<CreateChatRoomDialog> {
         throw Exception('Authentication token not found');
       }
 
-      print('Token: $token'); // 토큰 확인용 로그
-      print('Creating chat room with participants: $participants'); // 참여자 확인용 로그
+      // 요청 데이터 미리 준비
+      final requestBody = {
+        'title': _nameController.text,
+        'chat_type': 'private',
+        'users': participants,
+      };
+
+      print('토큰: $token');
+      print('참여자 목록: $participants');
+      print('participants type: ${participants.runtimeType}');  // 타입 출력
+      print('요청 데이터: $requestBody');  // 실제 요청할 데이터 출력
 
       final response = await http.post(
-        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/api/v1/chat/rooms/'),
+        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/api/v1/chat/rooms/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Token $token',
         },
-        body: jsonEncode({
-          'title': _nameController.text,
-          'type': 'private',  // 'private' 또는 'group'
-          'users': participants,  // 참여자 ID 리스트
-        }),
+        body: jsonEncode(requestBody),
       );
 
-      print('Request URL: ${response.request?.url}'); // URL 확인
-      print('Request headers: ${response.request?.headers}'); // 헤더 확인
-      print('Request body: ${response.request}'); // 요청 본문 확인
-      print('Response status: ${response.statusCode}'); // 응답 상태 코드 확인
-      print('Response body: ${response.body}'); // 응답 내용 확인
+      print('요청 URL: ${response.request?.url}');
+      print('요청 헤더: ${response.request?.headers}');
+      print('응답 상태: ${response.statusCode}');
+      print('응답 본문: ${response.body}');
 
       if (response.statusCode == 201) {
         if (mounted) {

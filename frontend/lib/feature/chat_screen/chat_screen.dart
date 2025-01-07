@@ -35,8 +35,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Future<void> _connectToChat() async {
     final chatService = ref.read(chatServiceProvider);
-    
+
     chatService.onMessageReceived = (message) {
+      print('Received message: ${message.content} from ${message.senderName}');  // 메시지 수신 로그
       setState(() {
         _messages.add(message);
       });
@@ -44,12 +45,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     };
 
     try {
+      print('Connecting to chat room ${widget.chatRoomId}...');  // 연결 시도 로그
       await chatService.connectToChat(widget.chatRoomId);
+      print('Connected to chat room successfully');  // 연결 성공 로그
       setState(() {
         _isConnecting = false;
       });
     } catch (e) {
-      print('Error connecting to chat: $e');
+      print('Error connecting to chat: $e');  // 연결 실패 로그
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('채팅 연결에 실패했습니다. 다시 시도해주세요.')),

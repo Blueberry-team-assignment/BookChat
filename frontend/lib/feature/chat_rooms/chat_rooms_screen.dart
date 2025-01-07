@@ -41,11 +41,14 @@ class _ChatRoomsScreenState extends State<ChatRoomsScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/api/v1/chat/rooms/'),
+        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/api/v1/chat/rooms/'),
         headers: {
           'Authorization': 'Token $token',
         },
       );
+
+      print('응답 상태: ${response.statusCode}');
+      print('응답 본문: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -55,9 +58,9 @@ class _ChatRoomsScreenState extends State<ChatRoomsScreen> {
             id: json['id'],
             name: json['title'],
             bookId: widget.bookId,
-            participants: (json['users'] as List).map((u) => u.toString()).toList(),
-            createdAt: DateTime.parse(json['created_at']),
-          )).toList();
+            participants: json['users']?.cast<String>() ?? [],  // null 체크 추가
+            createdAt: DateTime.parse(json['created']),
+    )).toList();
           isLoading = false;
         });
       } else {
