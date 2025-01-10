@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .models import Book, BookMemo
-from .serializers import BookSerializer, UserSerializer, LoginSerializer
+from .models import Book, BookMemo, Comment
+from .serializers import BookSerializer, UserSerializer, LoginSerializer, CommentSerializer
 import random 
 from django.contrib.auth import authenticate
 from rest_framework import status
@@ -153,6 +153,26 @@ def get_user_info(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_comments(request, book_id):
+    comments = Comment.objects.filter(book_id=book_id)
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request, book_id):
+    try:
+        book = Book.objects.get(id=book_id)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(book=book, user=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    except Book.DoesNotExist:
+        return Response({'error': 'Book not found'}, status=404)
+    
 ####################################
 @api_view(['POST'])
 def create_book(request):
@@ -164,3 +184,4 @@ def create_book(request):
         return Response(serializer.data, status=201)
     print(f"Book creation failed: {serializer.errors}")  # 이 줄도 로그에 기록됩니다.
     return Response(serializer.errors, status=400)
+

@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:book_chat/model/model_book.dart';
 import 'package:book_chat/feature/book_memo/book_memo_screen.dart';
 import 'package:book_chat/feature/chat_rooms/chat_rooms_screen.dart';
+import 'package:book_chat/feature/book_comment/book_comment_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -186,9 +187,8 @@ class _CarouselImageState extends ConsumerState<CarouselImage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatRoomsScreen(
-                                    bookId: carouselState.books[currentPage].id,
-                                    bookTitle: carouselState.books[currentPage].title,
+                                  builder: (context) => CommentScreen(
+                                    bookId: carouselState.books[currentPage].id.toString(),
                                   ),
                                 ),
                               );

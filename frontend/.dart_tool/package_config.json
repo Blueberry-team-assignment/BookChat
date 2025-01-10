@@ -308,6 +308,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///Users/haerinkim/.pub-cache/hosted/pub.dev/intl-0.19.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "io",
       "rootUri": "file:///Users/haerinkim/.pub-cache/hosted/pub.dev/io-1.0.4",
       "packageUri": "lib/",
@@ -686,7 +692,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-01-06T13:51:17.188142Z",
+  "generated": "2025-01-10T02:29:47.389809Z",
   "generator": "pub",
   "generatorVersion": "3.5.4",
   "flutterRoot": "file:///Users/haerinkim/Documents/flutter",

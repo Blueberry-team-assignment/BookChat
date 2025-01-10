@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, User
+from .models import Book, User, Comment
 
 class BookSerializer(serializers.ModelSerializer):
     poster_url = serializers.SerializerMethodField()
@@ -29,3 +29,10 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+class CommentSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.name', read_only=True)
+    
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'user_name', 'created_at']

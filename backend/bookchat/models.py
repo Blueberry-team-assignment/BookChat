@@ -50,6 +50,15 @@ class ChatRoom(models.Model):
             'participants': [user.id for user in self.participants.all()]
         }
 
+class Comment(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        
 class ChatMessage(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='book_messages')
     sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='book_chat_messages')  # related_name 추가

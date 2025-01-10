@@ -40,6 +40,8 @@ dependencies:
   djangoflow_openapi: ^0.1.22
   json_annotation: ^4.8.1
   shared_preferences:
+  dio: ^5.4.0
+  intl: ^0.19.0
 
 
   # The following adds the Cupertino Icons font to your application.
