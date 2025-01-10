@@ -7,6 +7,7 @@ import 'package:book_chat/feature/chat_rooms/chat_rooms_screen.dart';
 import 'package:book_chat/feature/book_comment/book_comment_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final currentPageProvider = StateProvider<int>((ref)=>0);
 final carouselProvider = StateNotifierProvider<CarouselNotifier, CarouselState>((ref){
@@ -51,29 +52,61 @@ class CarouselState{
 }
 
 class CarouselNotifier extends StateNotifier<CarouselState> {
-  CarouselNotifier(): super(CarouselState.initial());
+  CarouselNotifier() : super(CarouselState.initial());
 
-  void initializeState(List<Book> books) {
-    final images = books.map((m) => Image.network(m.poster)).toList();
-    final keywords = books.map((m) => m.keyword).toList();
-    final likes = books.map((m) => m.like).toList();
+  // CarouselNotifier 수정
+  void initializeState(List<Book> books) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/');
 
-    state = CarouselState(
-      books: books,
-      likes: likes,
-      keywords: keywords,
-      images: images,
-    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Token $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final myListBooks = json.decode(response.body) as List;
+        final myListIds = myListBooks.map((book) => book['id'] as int).toSet();
+
+        final images = books.map((m) => Image.network(m.poster)).toList();
+        final keywords = books.map((m) => m.keyword).toList();
+        final likes = books.map((m) => myListIds.contains(m.id)).toList();
+
+        state = CarouselState(
+          books: books,
+          likes: likes,
+          keywords: keywords,
+          images: images,
+        );
+      }
+    } catch (e) {
+      print('Error fetching myList: $e');
+    }
   }
 
   Future<void> toggleLike(int index, int bookId) async {
-    final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final url = Uri.parse(
+        'https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
+
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token $token',
+        },
         body: json.encode({'book_id': bookId}),
       );
+
+      print('Response Status: ${response.statusCode}'); // 응답 상태 확인
+      print('Response Body: ${response.body}'); // 응답 내용 확인
+
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
         List<bool> newLikes = [...state.likes];
@@ -110,11 +143,14 @@ class _CarouselImageState extends ConsumerState<CarouselImage> {
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     final currentPage = ref.watch(currentPageProvider);
     final carouselState = ref.watch(carouselProvider);
-    
-    if (carouselState.books.isEmpty) {
+
+    if (carouselState.books.isEmpty ||
+        carouselState.likes.isEmpty ||
+        carouselState.keywords.isEmpty ||
+        carouselState.images.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 

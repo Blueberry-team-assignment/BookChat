@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:book_chat/model/model_book.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final bookDetailProvider = NotifierProvider.family<BookDetailNotifier, Book, Book>((){
   return BookDetailNotifier();
@@ -14,13 +15,20 @@ class BookDetailNotifier extends FamilyNotifier<Book, Book>{
   }
 
   Future<void> toggleLike() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
     final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
+
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token $token',
+        },
         body: json.encode({'book_id': state.id}),
       );
+      print('Response: ${response.statusCode}, ${response.body}');
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
         state = state.copyWith(like: result['like']);

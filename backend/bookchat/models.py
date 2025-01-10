@@ -2,25 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
-# Create your models here.
-class Book(models.Model):
-    title=models.CharField(max_length=255)
-    keyword=models.CharField(max_length=255)
-    poster= models.ImageField()
-    like = models.BooleanField(default=False)
-    description = models.TextField(blank=True, null=True)  # 새로운 필드 추가
-
-    def get_poster_url(self):
-        if self.poster:
-            return self.poster.url  # Cloudinary URL 반환
-        return None
-
-class BookMemo(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
 class User(AbstractUser):
     name = models.CharField(max_length=100)
     id = models.CharField(unique=True, primary_key=True, max_length=100)
@@ -28,6 +9,22 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'username']
+
+class Book(models.Model):
+    title = models.CharField(max_length=255)
+    keyword = models.CharField(max_length=255)
+    poster = models.ImageField()
+    liked_by = models.ManyToManyField(User, related_name='liked_books', blank=True)
+    description = models.TextField(blank=True, null=True)
+
+    def get_poster_url(self):
+        return self.poster.url if self.poster else None
+
+class BookMemo(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class ChatRoom(models.Model):
     name = models.CharField(max_length=100)
@@ -58,7 +55,7 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        
+
 class ChatMessage(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='book_messages')
     sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='book_chat_messages')  # related_name 추가

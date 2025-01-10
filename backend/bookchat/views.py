@@ -34,14 +34,6 @@ def randomBook(request, id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def randomBook_myList(request):
-    myListBooks = Book.objects.filter(like=True)
-    sample_size = min(len(myListBooks), 4)
-    randomBooks = random.sample(list(myListBooks), sample_size)
-    serializer = BookSerializer(randomBooks, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
 def allBooks(request):
     totalBooks = Book.objects.all()
     serializer = BookSerializer(totalBooks, many=True)
@@ -103,15 +95,28 @@ def get_memo(request, book_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def change_mylist(request):
     try:
         book_id = request.data.get('book_id')
         book = Book.objects.get(id=book_id)
-        book.like = not book.like
-        book.save()
-        return Response({'success': True, 'like': book.like})
+        if request.user in book.liked_by.all():
+            book.liked_by.remove(request.user)
+            is_liked = False
+        else:
+            book.liked_by.add(request.user)
+            is_liked = True
+        return Response({'success': True, 'like': is_liked})
     except Book.DoesNotExist:
         return Response({'success': False, 'error': 'Book not found'}, status=404)
+
+@api_view(['GET'])
+def randomBook_myList(request):
+    myListBooks = Book.objects.filter(liked_by=request.user)
+    sample_size = min(len(myListBooks), 4)
+    randomBooks = random.sample(list(myListBooks), sample_size)
+    serializer = BookSerializer(randomBooks, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def login(request):

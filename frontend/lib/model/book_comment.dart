@@ -1,14 +1,14 @@
 // comment_model.dart
 class Comment {
-  final String id;
+  final int id;
   final String content;
-  final String userId;
+  final String userName;
   final DateTime createdAt;
 
   Comment({
     required this.id,
     required this.content,
-    required this.userId,
+    required this.userName,
     required this.createdAt,
   });
 
@@ -16,7 +16,7 @@ class Comment {
     return Comment(
       id: json['id'],
       content: json['content'],
-      userId: json['user_id'],
+      userName: json['user_name'],
       createdAt: DateTime.parse(json['created_at']),
     );
   }

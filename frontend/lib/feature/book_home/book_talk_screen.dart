@@ -5,6 +5,7 @@ import 'package:book_chat/feature/book_home/widget/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final refreshProvider = StateProvider<int>((ref) => 0);
 
@@ -22,28 +23,26 @@ class BooksNotifier extends StateNotifier<AsyncValue<List<Book>>> {
   BooksNotifier() : super(const AsyncValue.loading());
 
   Future<void> fetchBooks() async {
-    // 로딩 상태로 변경
     state = const AsyncValue.loading();
-
     try {
-      print("HTTP 요청 시작");
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
       final response = await http.get(
-        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/')
+          Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/'),
+          headers: {
+            'Authorization': 'Token $token',
+          }
       );
 
-      print("응답 상태 코드: ${response.statusCode}");
+      print("Response: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         final parsedBooks = parseBook(utf8.decode(response.bodyBytes));
-        print("Parsed books length: ${parsedBooks.length}");
-        // 성공 상태로 변경
         state = AsyncValue.data(parsedBooks);
-      } else {
-        throw Exception('failed to load data');
       }
-    } catch (error, stackTrace) {
-      print('Error: $error');
-      // 에러 상태로 변경
-      state = AsyncValue.error(error, stackTrace);
+    } catch (e) {
+      print('Error: $e');
+      state = AsyncValue.error(e, StackTrace.current);
     }
   }
 }

@@ -1,76 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import 'package:book_chat/model/book_comment.dart';
-
-// comment_repository.dart
-class CommentRepository {
-  final Dio _dio;
-
-  CommentRepository() : _dio = Dio(BaseOptions(
-    baseUrl: 'https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat',
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-  ));
-
-  Future<List<Comment>> getComments(String bookId) async {
-    try {
-      final response = await _dio.get('/books/$bookId/comments/');
-      return (response.data as List)
-          .map((json) => Comment.fromJson(json))
-          .toList();
-    } catch (e) {
-      throw Exception('댓글을 불러오는데 실패했습니다');
-    }
-  }
-
-  Future<Comment> createComment(String bookId, String content) async {
-    try {
-      final response = await _dio.post(
-        '/books/$bookId/comments/create/',
-        data: {'content': content},
-      );
-      return Comment.fromJson(response.data);
-    } catch (e) {
-      throw Exception('댓글 작성에 실패했습니다');
-    }
-  }
-}
-
-// comment_provider.dart
-final commentRepositoryProvider = Provider((ref) => CommentRepository());
-
-final commentsProvider = FutureProvider.family<List<Comment>, String>((ref, bookId) async {
-  final repository = ref.watch(commentRepositoryProvider);
-  return repository.getComments(bookId);
-});
-
-final createCommentProvider = StateNotifierProvider<CreateCommentNotifier, AsyncValue<void>>((ref) {
-  return CreateCommentNotifier(ref.watch(commentRepositoryProvider));
-});
-
-class CreateCommentNotifier extends StateNotifier<AsyncValue<void>> {
-  final CommentRepository _repository;
-
-  CreateCommentNotifier(this._repository) : super(const AsyncValue.data(null));
-
-  Future<void> createComment(String bookId, String content) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _repository.createComment(bookId, content));
-  }
-}
-
+import 'package:book_chat/feature/book_comment/provider/comment_provider.dart';
+import 'dart:async';
 // comment_screen.dart
-class CommentScreen extends ConsumerWidget {
+class CommentScreen extends ConsumerStatefulWidget {
   final String bookId;
-  final TextEditingController _commentController = TextEditingController();
 
   CommentScreen({required this.bookId, Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final comments = ref.watch(commentsProvider(bookId));
+  ConsumerState<CommentScreen> createState() => _CommentScreenState();
+}
+
+class _CommentScreenState extends ConsumerState<CommentScreen> {
+  final TextEditingController _commentController = TextEditingController();
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 3), (_) {
+      ref.refresh(commentsProvider(widget.bookId));
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _commentController.dispose();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    final comments = ref.watch(commentsProvider(widget.bookId));
     final createCommentState = ref.watch(createCommentProvider);
 
     return Scaffold(
@@ -114,14 +77,12 @@ class CommentScreen extends ConsumerWidget {
                       ? null
                       : () async {
                     if (_commentController.text.isEmpty) return;
-
                     await ref.read(createCommentProvider.notifier).createComment(
-                      bookId,
+                      widget.bookId,  // Change here
                       _commentController.text,
                     );
-
                     _commentController.clear();
-                    ref.refresh(commentsProvider(bookId));
+                    ref.refresh(commentsProvider(widget.bookId));  // And here
                   },
                   child: createCommentState.isLoading
                       ? const SizedBox(

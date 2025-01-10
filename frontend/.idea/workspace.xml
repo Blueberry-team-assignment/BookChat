@@ -10,8 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="66c5c558-26a6-4172-bff0-8436d4d95db2" name="Changes" comment="ch">
-      <change afterPath="$PROJECT_DIR$/lib/feature/book_comment/book_comment_screen.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/model/book_comment.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/feature/book_comment/comment_repository.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/feature/book_comment/provider/comment_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/bookchat/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bookchat/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/bookchat/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bookchat/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/bookchat/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bookchat/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/bookchat/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/bookchat/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/.filecache" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/.filecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/app.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/app.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/debug_android_application.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/debug_android_application.stamp" afterDir="false" />
@@ -19,13 +23,13 @@
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/kernel_snapshot_program.d" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/kernel_snapshot_program.d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/kernel_snapshot_program.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/kernel_snapshot_program.stamp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/program.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/079d45ec738434e6d7f0d0918240604f/program.dill" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/feature/book_comment/book_comment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/feature/book_comment/book_comment_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/feature/book_home/book_talk_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/feature/book_home/book_talk_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/feature/book_home/widget/carousel_slider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/feature/book_home/widget/carousel_slider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/feature/book_info/provider/book_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/feature/book_info/provider/book_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/model/book_comment.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/model/book_comment.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,6 +149,17 @@
     </task>
     <option name="localTasksCounter" value="5" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit test" />
