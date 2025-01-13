@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../my_page/my_page_screen.dart';
+import 'package:book_chat/feature/sign_up/signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -131,6 +132,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       )
                     : const Text('로그인'),
+              ),
+              const SizedBox(height: 3),  // 버튼 사이 간격
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SignUpScreen(),
+                    ),
+                  );
+                },
+                child: const Text('회원가입'),
               ),
             ],
           ),
