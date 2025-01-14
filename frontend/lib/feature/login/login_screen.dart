@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../my_page/my_page_screen.dart';
+import 'package:book_chat/feature/my_page/my_page_screen.dart';
 import 'package:book_chat/feature/sign_up/signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {

@@ -21,16 +21,24 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'name', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'id': {'read_only': True} 
+        }
     
     def create(self, validated_data):
         user = User.objects.create_user(
             email=validated_data['email'],
-            id=validated_data['id'],
             name=validated_data['name'],
+            username=validated_data['name'],  
             password=validated_data['password']
         )
         return user
+    
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("이미 존재하는 이메일입니다.")
+        return value
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

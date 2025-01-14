@@ -178,6 +178,33 @@ def create_comment(request, book_id):
     except Book.DoesNotExist:
         return Response({'error': 'Book not found'}, status=404)
     
+
+@api_view(['POST'])
+def signup(request):
+    print("Signup request data:", request.data)  # 디버깅용 로그
+    
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        try:
+            user = serializer.save()  # create 메서드 자동 호출
+            token, _ = Token.objects.get_or_create(user=user)
+            
+            return Response({
+                'message': '회원가입이 완료되었습니다.',
+                'token': token.key,
+                'user': UserSerializer(user).data
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            print("Error during signup:", str(e))  # 에러 로깅
+            return Response({
+                'error': '회원가입 처리 중 오류가 발생했습니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    print("Validation errors:", serializer.errors)  # 유효성 검사 오류 로깅
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 ####################################
 @api_view(['POST'])
 def create_book(request):

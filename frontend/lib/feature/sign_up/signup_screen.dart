@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignUpScreen extends ConsumerStatefulWidget{
   static final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
@@ -86,10 +88,55 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           ),
 
           ElevatedButton(
-            onPressed: (){
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                // 유효성 검사 통과시 처리할 로직
-                print('폼 검증 성공');
+                try {
+                  final response = await http.post(
+                    Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/signup/'),
+                    headers: {'Content-Type': 'application/json'},
+                    body: jsonEncode({
+                      'email': widget.emailController.text,
+                      'password': widget.passwordController.text,
+                      'name':widget.nameController.text,
+                    }),
+                  );
+
+                  if(response.statusCode == 201){
+                    if(mounted){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('회원가입이 완료되었습니다'),
+                            backgroundColor: Colors.green,
+                        ),
+                      );
+
+                      //로그인 화면 이동
+                      Navigator.pop(context); //현재 화면 (회원가입)을 스택에서 제거
+                    }
+                  }else{
+                    final errorData = jsonDecode(response.body);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(errorData['message'] ?? '회원가입 실패'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                }
+                catch(e, stackTrace){
+                  print('회원가입 중 오류 발생: $e');
+                  print('Stack trace: $stackTrace');
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('네트워크 오류가 발생했습니다. 오류: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text('가입하기'),
