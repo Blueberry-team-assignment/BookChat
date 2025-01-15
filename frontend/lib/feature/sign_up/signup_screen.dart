@@ -1,3 +1,4 @@
+import 'package:book_chat/feature/sign_up/signup_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -8,28 +9,21 @@ class SignUpScreen extends ConsumerStatefulWidget{
   static final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$');
   static final nameRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  SignUpScreen({super.key});
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void dispose() {
-    widget.emailController.dispose();
-    widget.passwordController.dispose();
-    widget.nameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // SignUpDto 상태 읽기
+    final signUpState = ref.watch(signUpProvider);
+    final notifier = ref.read(signUpProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("회원가입"),
@@ -39,7 +33,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
     child: Column(
         children: [
           TextFormField(
-            controller: widget.emailController,
+            initialValue: signUpState.email,
+            onChanged: (value) => notifier.updateEmail(value),
             decoration: InputDecoration(
               labelText: '이메일',
               hintText: 'example@email.com',
@@ -55,7 +50,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.passwordController,
+            initialValue: signUpState.password,
+            onChanged: (value) => notifier.updatePassword(value),
             decoration: InputDecoration(
               labelText: '비밀번호',
               hintText: '8자 이상, 특수문자 포함',
@@ -72,7 +68,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.nameController,
+            initialValue: signUpState.name,
+            onChanged: (value) => notifier.updateName(value),
             decoration: const InputDecoration(
               labelText: '이름',
             ),
@@ -94,11 +91,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
                   final response = await http.post(
                     Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/signup/'),
                     headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode({
-                      'email': widget.emailController.text,
-                      'password': widget.passwordController.text,
-                      'name':widget.nameController.text,
-                    }),
+                    body: jsonEncode(signUpState.toJson()),
                   );
 
                   if(response.statusCode == 201){
