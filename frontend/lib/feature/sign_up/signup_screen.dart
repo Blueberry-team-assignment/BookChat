@@ -1,8 +1,11 @@
+import 'package:book_chat/feature/sign_up/signup_dto.dart';
 import 'package:book_chat/feature/sign_up/signup_notifier.dart';
+import 'package:book_chat/feature/sign_up/signup_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 
 class SignUpScreen extends ConsumerStatefulWidget{
   static final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
@@ -16,6 +19,31 @@ class SignUpScreen extends ConsumerStatefulWidget{
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
+  Future<void> _handleSignUp(SignUpDto signUpDto) async {
+    try {
+      await ref.read(authRepositoryProvider).signUp(signUpDto);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('회원가입이 완료되었습니다'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -87,49 +115,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                try {
-                  final response = await http.post(
-                    Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/signup/'),
-                    headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode(signUpState.toJson()),
-                  );
-
-                  if(response.statusCode == 201){
-                    if(mounted){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('회원가입이 완료되었습니다'),
-                            backgroundColor: Colors.green,
-                        ),
-                      );
-
-                      //로그인 화면 이동
-                      Navigator.pop(context); //현재 화면 (회원가입)을 스택에서 제거
-                    }
-                  }else{
-                    final errorData = jsonDecode(response.body);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(errorData['message'] ?? '회원가입 실패'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  }
-                }
-                catch(e, stackTrace){
-                  print('회원가입 중 오류 발생: $e');
-                  print('Stack trace: $stackTrace');
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('네트워크 오류가 발생했습니다. 오류: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
+                final signUpState = ref.read(signUpProvider);
+                _handleSignUp(signUpState);
               }
             },
             child: const Text('가입하기'),
