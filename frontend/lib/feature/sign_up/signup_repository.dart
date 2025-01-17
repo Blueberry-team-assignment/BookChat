@@ -5,7 +5,9 @@ import 'package:book_chat/common/repository/api_repository.dart';
 
 // Repository interface
 abstract class IAuthRepository {
-  Future<void> signUp(SignUpDto signUpDto);
+  Future<void> signUp({
+    required SignUpDto signupDto
+  });
 }
 
 // Repository implementation
@@ -16,11 +18,13 @@ class AuthRepository implements IAuthRepository {
       : _apiRepository = apiRepository ?? ApiRepository();
 
   @override
-  Future<void> signUp(SignUpDto signUpDto) async {
+  Future<void> signUp({
+    required SignUpDto signupDto
+  }) async {
     try {
       final response = await _apiRepository.post(
         '/bookchat/signup/',
-        body: signUpDto.toJson(),
+        body: signupDto.toJson(),
       );
 
       if (response.statusCode == 201) {

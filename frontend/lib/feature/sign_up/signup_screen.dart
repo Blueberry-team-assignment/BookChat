@@ -21,7 +21,7 @@ class SignUpScreen extends ConsumerStatefulWidget{
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
   Future<void> _handleSignUp(SignUpDto signUpDto) async {
     try {
-      await ref.read(authRepositoryProvider).signUp(signUpDto);
+      await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -61,8 +61,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
     child: Column(
         children: [
           TextFormField(
-            initialValue: signUpState.email,
-            onChanged: (value) => notifier.updateEmail(value),
+            initialValue: signUpState.signupDto?.email ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                signUpState.signupDto.copyWith(email: value)
+            ),
             decoration: InputDecoration(
               labelText: '이메일',
               hintText: 'example@email.com',
@@ -78,8 +80,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            initialValue: signUpState.password,
-            onChanged: (value) => notifier.updatePassword(value),
+            initialValue: signUpState.signupDto?.password ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                signUpState.signupDto.copyWith(password: value)
+            ),
             decoration: InputDecoration(
               labelText: '비밀번호',
               hintText: '8자 이상, 특수문자 포함',
@@ -96,8 +100,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            initialValue: signUpState.name,
-            onChanged: (value) => notifier.updateName(value),
+            initialValue: signUpState.signupDto?.name ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                signUpState.signupDto.copyWith(name: value)
+            ),
             decoration: const InputDecoration(
               labelText: '이름',
             ),
@@ -116,7 +122,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 final signUpState = ref.read(signUpProvider);
-                _handleSignUp(signUpState);
+                _handleSignUp(signUpState.signupDto);
               }
             },
             child: const Text('가입하기'),
