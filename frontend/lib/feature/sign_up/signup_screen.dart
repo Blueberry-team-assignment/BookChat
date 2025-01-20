@@ -63,7 +63,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           TextFormField(
             initialValue: signUpState.signupDto?.email ?? '',
             onChanged: (value) => notifier.updateSignUpDto(
-                signUpState.signupDto.copyWith(email: value)
+                SignUpDto(
+                  email: value,
+                  password: signUpState.signupDto.password,
+                  name: signUpState.signupDto.name,
+                )
             ),
             decoration: InputDecoration(
               labelText: '이메일',
@@ -82,7 +86,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           TextFormField(
             initialValue: signUpState.signupDto?.password ?? '',
             onChanged: (value) => notifier.updateSignUpDto(
-                signUpState.signupDto.copyWith(password: value)
+                SignUpDto(
+                  email: signUpState.signupDto.email,
+                  password: value,  // 새로운 password 값
+                  name: signUpState.signupDto.name,
+                )
             ),
             decoration: InputDecoration(
               labelText: '비밀번호',
@@ -102,8 +110,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           TextFormField(
             initialValue: signUpState.signupDto?.name ?? '',
             onChanged: (value) => notifier.updateSignUpDto(
-                signUpState.signupDto.copyWith(name: value)
+                SignUpDto(
+                  email: signUpState.signupDto.email,
+                  password: signUpState.signupDto.password,
+                  name: value,
+                )
             ),
+
             decoration: const InputDecoration(
               labelText: '이름',
             ),

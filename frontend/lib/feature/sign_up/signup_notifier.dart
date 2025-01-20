@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/feature/sign_up/signup_dto.dart';
 import 'package:book_chat/feature/sign_up/signup_repository.dart';
+import 'dart:math';
 
 class SignUpState{
   final SignUpDto signupDto;
@@ -13,11 +14,16 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
   final IAuthRepository _authInterface;
   SignUpNotifier(this._authInterface)
       : super(SignUpState(
-      signupDto: SignUpDto(email: '', password: '', name: '')
+      signupDto: SignUpDto(
+          email: '',
+          password: '',
+          name: '')
   ));
 
   void updateSignUpDto(SignUpDto dto) {
-    state = SignUpState(signupDto: dto);
+    state = SignUpState(
+        signupDto: dto
+    );
   }
 
   Future<void> signUp({
@@ -36,18 +42,15 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
         signupDto: signupDto
       );
 
-      final updatedSignUpDto = signupDto.copyWith(
-        email: email,
-        password: password,
-        name: name,
-      );
+      updateSignUpDto(signupDto);
+
     } catch (e) {
       print(e);
     }
   }
 }
-
 final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
   final IAuthRepository = ref.read(authRepositoryProvider);
   return SignUpNotifier(IAuthRepository);
 });
+

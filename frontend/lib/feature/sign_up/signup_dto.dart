@@ -14,3 +14,4 @@ class SignUpDto with _$SignUpDto {
   factory SignUpDto.fromJson(Map<String, dynamic> json) =>
       _$SignUpDtoFromJson(json);
 }
+
