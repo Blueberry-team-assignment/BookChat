@@ -1,33 +1,57 @@
+import 'package:book_chat/feature/sign_up/signup_dto.dart';
+import 'package:book_chat/feature/sign_up/signup_notifier.dart';
+import 'package:book_chat/feature/sign_up/signup_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class SignUpScreen extends ConsumerStatefulWidget{
   static final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
   static final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$');
   static final nameRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  SignUpScreen({super.key});
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
+  Future<void> _handleSignUp(SignUpDto signUpDto) async {
+    try {
+      await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('회원가입이 완료되었습니다'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void dispose() {
-    widget.emailController.dispose();
-    widget.passwordController.dispose();
-    widget.nameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // SignUpDto 상태 읽기
+    final signUpState = ref.watch(signUpProvider);
+    final notifier = ref.read(signUpProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("회원가입"),
@@ -37,7 +61,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
     child: Column(
         children: [
           TextFormField(
-            controller: widget.emailController,
+            initialValue: signUpState.signupDto?.email ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                SignUpDto(
+                  email: value,
+                  password: signUpState.signupDto.password,
+                  name: signUpState.signupDto.name,
+                )
+            ),
             decoration: InputDecoration(
               labelText: '이메일',
               hintText: 'example@email.com',
@@ -53,7 +84,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.passwordController,
+            initialValue: signUpState.signupDto?.password ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                SignUpDto(
+                  email: signUpState.signupDto.email,
+                  password: value,  // 새로운 password 값
+                  name: signUpState.signupDto.name,
+                )
+            ),
             decoration: InputDecoration(
               labelText: '비밀번호',
               hintText: '8자 이상, 특수문자 포함',
@@ -70,7 +108,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.nameController,
+            initialValue: signUpState.signupDto?.name ?? '',
+            onChanged: (value) => notifier.updateSignUpDto(
+                SignUpDto(
+                  email: signUpState.signupDto.email,
+                  password: signUpState.signupDto.password,
+                  name: value,
+                )
+            ),
+
             decoration: const InputDecoration(
               labelText: '이름',
             ),
@@ -86,10 +132,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           ),
 
           ElevatedButton(
-            onPressed: (){
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                // 유효성 검사 통과시 처리할 로직
-                print('폼 검증 성공');
+                final signUpState = ref.read(signUpProvider);
+                _handleSignUp(signUpState.signupDto);
               }
             },
             child: const Text('가입하기'),
