@@ -1,5 +1,5 @@
-// lib/model/chat_room.dart
-// lib/model/chat_room.dart
+// lib/model/chat_room_model.dart
+// lib/model/chat_room_model.dart
 class ChatRoom {
   final int id;
   final String name;

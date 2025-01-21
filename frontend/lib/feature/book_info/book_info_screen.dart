@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:book_chat/model/model_book.dart';
+import 'package:book_chat/model/book_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/feature/book_info/provider/book_provider.dart';
 

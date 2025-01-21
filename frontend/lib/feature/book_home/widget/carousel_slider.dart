@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:book_chat/model/model_book.dart';
+import 'package:book_chat/model/book_model.dart';
 import 'package:book_chat/feature/book_memo/book_memo_screen.dart';
 import 'package:book_chat/feature/chat_rooms/chat_rooms_screen.dart';
 import 'package:book_chat/feature/book_comment/book_comment_screen.dart';

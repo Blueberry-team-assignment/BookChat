@@ -1,15 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:book_chat/feature/sign_up/signup_dto.dart';
-import 'package:book_chat/feature/sign_up/signup_repository.dart';
+import 'package:book_chat/dto/signup_dto.dart';
+import 'package:book_chat/data/sign_up/signup_repository.dart';
 import 'dart:math';
 
-class SignUpState{
-  final SignUpDto signupDto;
+final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
+  final IAuthRepository = ref.read(authRepositoryProvider);
+  return SignUpNotifier(IAuthRepository);
+});
 
-  SignUpState({
-    required this.signupDto
-  });
-}
 class SignUpNotifier extends StateNotifier<SignUpState> {
   final IAuthRepository _authInterface;
   SignUpNotifier(this._authInterface)
@@ -49,8 +47,11 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
     }
   }
 }
-final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
-  final IAuthRepository = ref.read(authRepositoryProvider);
-  return SignUpNotifier(IAuthRepository);
-});
 
+class SignUpState{
+  final SignUpDto signupDto;
+
+  SignUpState({
+    required this.signupDto
+  });
+}

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:book_chat/feature/chat_rooms/widget/create_chat_room_dialog.dart';
 import 'package:book_chat/feature/chat_screen/chat_screen.dart';
-import 'package:book_chat/model/chat_room.dart';
+import 'package:book_chat/model/chat_room_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

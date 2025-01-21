@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:book_chat/model/model_book.dart';
-import 'package:book_chat/model/api_adapter.dart';
+import 'package:book_chat/model/book_model.dart';
+import 'package:book_chat/model/api_adapter_model.dart';
 import 'package:book_chat/feature/book_home/widget/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

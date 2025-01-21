@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
-import 'package:book_chat/model/book_comment.dart';
+import 'package:book_chat/model/book_comment_model.dart';
 
 // comment_repository.dart
 class CommentRepository {

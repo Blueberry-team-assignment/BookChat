@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:book_chat/model/model_book.dart';
+import 'package:book_chat/model/book_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final bookDetailProvider = NotifierProvider.family<BookDetailNotifier, Book, Book>((){
