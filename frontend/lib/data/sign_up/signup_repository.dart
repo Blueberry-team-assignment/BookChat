@@ -9,6 +9,11 @@ abstract class IAuthRepository {
   });
 }
 
+// Provider 정의
+final authRepositoryProvider = Provider<IAuthRepository>((ref) {
+  return AuthRepository();
+});
+
 // Repository implementation
 class AuthRepository implements IAuthRepository {
   final ApiRepository _apiRepository;
@@ -32,11 +37,6 @@ class AuthRepository implements IAuthRepository {
     }
   }
 }
-
-// Provider 정의
-final authRepositoryProvider = Provider<IAuthRepository>((ref) {
-  return AuthRepository();
-});
 
 
 

@@ -10,3 +10,7 @@ db.sqlite3
 .vscode/
 
 *.env
+frontend/.dart_tool/*
+frontend/build/*
+*.freezed.dart 
+*.g.dart

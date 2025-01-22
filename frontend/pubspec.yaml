@@ -30,16 +30,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod:
-  riverpod_annotation:
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
   freezed_annotation: ^2.4.1
-  carousel_slider:
-  http:
+  carousel_slider: ^4.1.1
+  http: ^1.2.2
   web_socket_channel: ^3.0.1
   djangoflow_chat: ^0.2.0+1
   djangoflow_openapi: ^0.1.22
   json_annotation: ^4.8.1
-  shared_preferences:
+  shared_preferences: ^2.2.2
   dio: ^5.4.0
   intl: ^0.19.0
 
@@ -52,7 +52,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  riverpod_generator:
+  riverpod_generator: ^2.6.3
   build_runner: ^2.4.8
   freezed: ^2.4.6
   json_serializable: ^6.7.1

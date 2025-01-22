@@ -20,30 +20,30 @@ class SignUpScreen extends ConsumerStatefulWidget{
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
-  Future<void> _handleSignUp(SignUpDto signUpDto) async {
-    try {
-      await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('회원가입이 완료되었습니다'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } on AuthException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.message),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
+  // Future<void> _handleSignUp(SignUpDto signUpDto) async {
+  //   try {
+  //     await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+  //
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('회원가입이 완료되었습니다'),
+  //           backgroundColor: Colors.green,
+  //         ),
+  //       );
+  //       Navigator.pop(context);
+  //     }
+  //   } on AuthException catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(e.message),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   final _formKey = GlobalKey<FormState>();
 
@@ -62,6 +62,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
     child: Column(
         children: [
           TextFormField(
+            // initValue 말고 controller를 선언한 다음에
             initialValue: signUpState.signupDto?.email ?? '',
             onChanged: (value) => notifier.updateSignUpDto(
                 SignUpDto(
@@ -135,8 +136,28 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                final signUpState = ref.read(signUpProvider);
-                _handleSignUp(signUpState.signupDto);
+                try {
+                  final signUpState = ref.read(signUpProvider);
+                  await ref.read(authRepositoryProvider).signUp(signupDto: signUpState.signupDto);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('회원가입이 완료되었습니다'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                } on AuthException catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.message),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text('가입하기'),

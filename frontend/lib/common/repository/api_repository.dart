@@ -4,9 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiRepository {
   static var baseUrl = dotenv.env['BASE_URL'];
-  final http.Client _client;
-
-  ApiRepository({http.Client? client}) : _client = client ?? http.Client();
 
   Future<dynamic> post(
       String endpoint, {
@@ -18,7 +15,7 @@ class ApiRepository {
     };
 
     try {
-      final response = await _client.post(
+      final response = await http.post(
         Uri.parse('$baseUrl$endpoint'),
         body: jsonEncode(body),
         headers: {...defaultHeaders, ...?headers},
@@ -32,7 +29,6 @@ class ApiRepository {
 
   dynamic _handleResponse(dynamic response) {
     if (response.statusCode == 201 || response.statusCode == 200) {
-      // Response body가 있다면 파싱하여 반환, 없다면 null 반환
       if (response.body.isNotEmpty) {
         return jsonDecode(response.body);
       }
@@ -40,8 +36,32 @@ class ApiRepository {
     }
 
     final errorData = jsonDecode(response.body);
+    // 이메일 관련 에러 메시지 처리
+    if (errorData['email'] != null && errorData['email'] is List) {
+      throw AuthException(
+        message: errorData['email'][0],  // "user with this email already exists"
+        statusCode: response.statusCode,
+      );
+    }
+
+    // 다른 필드의 에러 메시지도 처리
+    if (errorData['password'] != null && errorData['password'] is List) {
+      throw AuthException(
+        message: errorData['password'][0],
+        statusCode: response.statusCode,
+      );
+    }
+
+    if (errorData['name'] != null && errorData['name'] is List) {
+      throw AuthException(
+        message: errorData['name'][0],
+        statusCode: response.statusCode,
+      );
+    }
+
+    // 기본 에러 메시지
     throw AuthException(
-      message: errorData['message'] ?? '요청 처리 실패',
+      message: errorData['message'] ?? '요청 처리 중 오류가 발생했습니다',
       statusCode: response.statusCode,
     );
   }
