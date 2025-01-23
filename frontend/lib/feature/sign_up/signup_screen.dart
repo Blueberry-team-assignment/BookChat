@@ -20,32 +20,48 @@ class SignUpScreen extends ConsumerStatefulWidget{
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
-  // Future<void> _handleSignUp(SignUpDto signUpDto) async {
-  //   try {
-  //     await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
-  //
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text('회원가입이 완료되었습니다'),
-  //           backgroundColor: Colors.green,
-  //         ),
-  //       );
-  //       Navigator.pop(context);
-  //     }
-  //   } on AuthException catch (e) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(e.message),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
 
   final _formKey = GlobalKey<FormState>();
+
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    final signUpState = ref.read(signUpProvider);
+
+    // 컨트롤러 초기화 및 초기값 설정
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _nameController = TextEditingController();
+
+    // 컨트롤러 리스너 설정
+    _emailController.addListener(_updateDto);
+    _passwordController.addListener(_updateDto);
+    _nameController.addListener(_updateDto);
+  }
+
+  @override
+  void dispose() {
+    // 컨트롤러 해제
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  void _updateDto() {
+    final notifier = ref.read(signUpProvider.notifier);
+    notifier.updateSignUpDto(
+      SignUpDto(
+        email: _emailController.text,
+        password: _passwordController.text,
+        name: _nameController.text,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +79,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
         children: [
           TextFormField(
             // initValue 말고 controller를 선언한 다음에
-            initialValue: signUpState.signupDto?.email ?? '',
-            onChanged: (value) => notifier.updateSignUpDto(
-                SignUpDto(
-                  email: value,
-                  password: signUpState.signupDto.password,
-                  name: signUpState.signupDto.name,
-                )
-            ),
+            controller: _emailController,
             decoration: InputDecoration(
               labelText: '이메일',
               hintText: 'example@email.com',
@@ -86,14 +95,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            initialValue: signUpState.signupDto?.password ?? '',
-            onChanged: (value) => notifier.updateSignUpDto(
-                SignUpDto(
-                  email: signUpState.signupDto.email,
-                  password: value,  // 새로운 password 값
-                  name: signUpState.signupDto.name,
-                )
-            ),
+            controller: _passwordController,
             decoration: InputDecoration(
               labelText: '비밀번호',
               hintText: '8자 이상, 특수문자 포함',
@@ -110,15 +112,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            initialValue: signUpState.signupDto?.name ?? '',
-            onChanged: (value) => notifier.updateSignUpDto(
-                SignUpDto(
-                  email: signUpState.signupDto.email,
-                  password: signUpState.signupDto.password,
-                  name: value,
-                )
-            ),
-
+            controller: _nameController,
             decoration: const InputDecoration(
               labelText: '이름',
             ),
