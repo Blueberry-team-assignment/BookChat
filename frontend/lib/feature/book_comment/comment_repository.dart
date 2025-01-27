@@ -1,4 +1,4 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:book_chat/model/book_comment_model.dart';
 
@@ -16,10 +16,8 @@ class CommentRepository {
   }
 
   Future<void> _initializeToken() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString('auth_token');
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'auth_token');
+
+    final token = await UserSecureStorage.getToken();
     if (token != null) {
       _dio.options.headers['Authorization'] = 'Token $token';
       _dio.options.headers['Content-Type'] = 'application/json';

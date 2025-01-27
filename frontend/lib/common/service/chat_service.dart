@@ -1,6 +1,6 @@
 // lib/common/service/chat_service.dart
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:book_chat/feature/chat_screen/model/chat_message.dart';
 
@@ -10,10 +10,8 @@ class ChatService {
 
   // lib/common/service/chat_service.dart
   Future<void> connectToChat(int roomId) async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString('auth_token');
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'auth_token');
+
+    final token = await UserSecureStorage.getToken();
     if (token == null) {
       throw Exception('Authentication token not found');
     }

@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:book_chat/feature/my_page/my_page_screen.dart';
 import 'package:book_chat/feature/sign_up/signup_screen.dart';
 
@@ -41,10 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final token = responseData['token'];
         
         // 토큰 저장
-        // final prefs = await SharedPreferences.getInstance();
-        // await prefs.setString('auth_token', token);
-        const storage = FlutterSecureStorage();
-        await storage.write(key: 'auth_token', value: token);
+        await UserSecureStorage.setToken(token);
         
         // 사용자 정보 업데이트
         if (responseData.containsKey('user')) {

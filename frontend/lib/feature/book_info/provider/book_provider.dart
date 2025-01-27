@@ -1,5 +1,5 @@
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:book_chat/model/book_model.dart';
@@ -15,10 +15,8 @@ class BookDetailNotifier extends FamilyNotifier<Book, Book>{
   }
 
   Future<void> toggleLike() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString('auth_token');
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'auth_token');
+
+    final token = await UserSecureStorage.getToken();
     final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
 
     try {

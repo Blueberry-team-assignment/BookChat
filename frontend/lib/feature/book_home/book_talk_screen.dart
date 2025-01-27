@@ -1,8 +1,8 @@
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:book_chat/model/book_model.dart';
 import 'package:book_chat/model/api_adapter_model.dart';
 import 'package:book_chat/feature/book_home/widget/carousel_slider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,10 +25,8 @@ class BooksNotifier extends StateNotifier<AsyncValue<List<Book>>> {
   Future<void> fetchBooks() async {
     state = const AsyncValue.loading();
     try {
-      // final prefs = await SharedPreferences.getInstance();
-      // final token = prefs.getString('auth_token');
-      const storage = FlutterSecureStorage();
-      final token = await storage.read(key: 'auth_token');
+
+      final token = await UserSecureStorage.getToken();
       final response = await http.get(
           Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/'),
           headers: {
