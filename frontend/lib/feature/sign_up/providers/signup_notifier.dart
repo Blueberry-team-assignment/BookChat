@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/dto/signup_dto.dart';
 import 'package:book_chat/data/sign_up/signup_repository.dart';
-import 'dart:math';
 
 final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
   final IAuthRepository = ref.read(authRepositoryProvider);
