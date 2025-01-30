@@ -1,15 +1,21 @@
+import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/dto/signup_dto.dart';
-import 'package:book_chat/data/sign_up/signup_repository.dart';
+
+// ApiRepository provider 선언
+final apiRepositoryProvider = Provider<ApiRepository>((ref) {
+  return ApiRepository();
+});
 
 final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
-  final IAuthRepository = ref.read(authRepositoryProvider);
-  return SignUpNotifier(IAuthRepository);
+  final apiRepository = ref.read(apiRepositoryProvider);
+  return SignUpNotifier(apiRepository);
 });
 
 class SignUpNotifier extends StateNotifier<SignUpState> {
-  final IAuthRepository _authInterface;
-  SignUpNotifier(this._authInterface)
+  // final IAuthRepository _authInterface;
+  final ApiRepository _apiRepository;
+  SignUpNotifier(this._apiRepository)
       : super(SignUpState(
       signupDto: SignUpDto(
           email: '',
@@ -35,8 +41,9 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
           name: name
       );
 
-      final signUpResult = await _authInterface.signUp(
-        signupDto: signupDto
+      await _apiRepository.post(
+        '/bookchat/signup/',
+        body: signupDto.toJson(),
       );
 
       updateSignUpDto(signupDto);

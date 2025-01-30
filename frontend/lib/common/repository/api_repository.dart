@@ -6,13 +6,13 @@ class ApiRepository {
   static var baseUrl = dotenv.env['BASE_URL'];
 
   Future<dynamic> post(
-      String endpoint, {
-        required dynamic body,
-        Map<String, String>? headers,
-      }) async {
-    final defaultHeaders = {
-      'Content-Type': 'application/json',
-    };
+    String endpoint, {
+      required dynamic body,
+      Map<String, String>? headers,
+    }) async {
+  final defaultHeaders = {
+    'Content-Type': 'application/json',
+  };
 
     try {
       final response = await http.post(

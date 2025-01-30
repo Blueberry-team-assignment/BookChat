@@ -1,6 +1,5 @@
 import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:book_chat/dto/signup_dto.dart';
-import 'package:book_chat/data/sign_up/signup_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,6 +21,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
+
+  final apiRepositoryProvider = Provider<ApiRepository>((ref) {
+    return ApiRepository();
+  });
 
   @override
   void dispose() {
@@ -100,7 +103,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
                     password: passwordController.text,
                     name: nameController.text,
                   );
-                  await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+                  // await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+                  await ref.read(apiRepositoryProvider).post(
+                    '/bookchat/signup/',
+                    body: signUpDto.toJson(),
+                  );
 
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
