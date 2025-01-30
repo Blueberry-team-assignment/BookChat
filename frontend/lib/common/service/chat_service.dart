@@ -11,7 +11,8 @@ class ChatService {
   // lib/common/service/chat_service.dart
   Future<void> connectToChat(int roomId) async {
 
-    final token = await UserSecureStorage.getToken();
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken();
     if (token == null) {
       throw Exception('Authentication token not found');
     }

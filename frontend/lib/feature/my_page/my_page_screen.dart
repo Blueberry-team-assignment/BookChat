@@ -60,10 +60,10 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
 
   Future<void> loadUserInfo() async {
     state = state.copyWith(isLoading: true);
-
+    final tokenRepository = SecureStorageTokenRepository();
     try {
 
-      final token = await UserSecureStorage.getToken();
+      final token = await tokenRepository.getToken();
       if (token == null) {
         state = state.copyWith(
           error: '로그인이 필요합니다',
@@ -106,7 +106,8 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
   }
 
   void logout() async{
-    await UserSecureStorage.deleteToken();
+    final tokenRepository = SecureStorageTokenRepository();
+    await tokenRepository.deleteToken();
     state = UserInfoState();
   }
 }
@@ -130,11 +131,13 @@ class MyPageScreen extends ConsumerStatefulWidget {
 }
 
 class _MyPageScreenState extends ConsumerState<MyPageScreen> {
+  final tokenRepository = SecureStorageTokenRepository();
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() async {
-      final token = await UserSecureStorage.getToken();
+      final token = await tokenRepository.getToken();
       if (token != null) {
         ref.read(userInfoProvider.notifier).loadUserInfo();
       }

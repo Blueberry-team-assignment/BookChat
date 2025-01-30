@@ -55,8 +55,8 @@ class CarouselNotifier extends StateNotifier<CarouselState> {
 
   // CarouselNotifier 수정
   void initializeState(List<Book> books) async {
-
-    final token = await UserSecureStorage.getToken();
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken();
     final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/');
 
     try {
@@ -88,8 +88,9 @@ class CarouselNotifier extends StateNotifier<CarouselState> {
   }
 
   Future<void> toggleLike(int index, int bookId) async {
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken();
 
-    final token = await UserSecureStorage.getToken();
     final url = Uri.parse(
         'https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
 

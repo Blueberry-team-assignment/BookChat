@@ -41,7 +41,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final token = responseData['token'];
         
         // 토큰 저장
-        await UserSecureStorage.setToken(token);
+        final tokenRepository = SecureStorageTokenRepository();
+        await tokenRepository.setToken(token);
         
         // 사용자 정보 업데이트
         if (responseData.containsKey('user')) {
