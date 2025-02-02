@@ -26,7 +26,7 @@ class BooksNotifier extends StateNotifier<AsyncValue<List<Book>>> {
     state = const AsyncValue.loading();
     try {
       final tokenRepository = SecureStorageTokenRepository();
-      final token = await tokenRepository.getToken();
+      final token = await tokenRepository.getToken("auth_token");
       final response = await http.get(
           Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/'),
           headers: {

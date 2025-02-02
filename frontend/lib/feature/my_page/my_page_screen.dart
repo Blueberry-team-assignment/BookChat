@@ -63,7 +63,7 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
     final tokenRepository = SecureStorageTokenRepository();
     try {
 
-      final token = await tokenRepository.getToken();
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         state = state.copyWith(
           error: '로그인이 필요합니다',
@@ -107,7 +107,7 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
 
   void logout() async{
     final tokenRepository = SecureStorageTokenRepository();
-    await tokenRepository.deleteToken();
+    await tokenRepository.deleteToken("auth_token");
     state = UserInfoState();
   }
 }
@@ -137,7 +137,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      final token = await tokenRepository.getToken();
+      final token = await tokenRepository.getToken("auth_token");
       if (token != null) {
         ref.read(userInfoProvider.notifier).loadUserInfo();
       }

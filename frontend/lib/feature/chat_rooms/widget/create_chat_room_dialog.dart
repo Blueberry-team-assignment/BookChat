@@ -35,7 +35,7 @@ class _CreateChatRoomDialogState extends State<CreateChatRoomDialog> {
 
     try {
       final tokenRepository = SecureStorageTokenRepository();
-      final token = await tokenRepository.getToken();
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         throw Exception('Authentication token not found');
       }

@@ -34,7 +34,7 @@ class _ChatRoomsScreenState extends State<ChatRoomsScreen> {
   Future<void> _loadChatRooms() async {
     try {
       final tokenRepository = SecureStorageTokenRepository();
-      final token = await tokenRepository.getToken();
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         throw Exception('Authentication token not found');
       }

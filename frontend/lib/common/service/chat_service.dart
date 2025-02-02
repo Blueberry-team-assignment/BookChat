@@ -12,7 +12,7 @@ class ChatService {
   Future<void> connectToChat(int roomId) async {
 
     final tokenRepository = SecureStorageTokenRepository();
-    final token = await tokenRepository.getToken();
+    final token = await tokenRepository.getToken("auth_token");
     if (token == null) {
       throw Exception('Authentication token not found');
     }

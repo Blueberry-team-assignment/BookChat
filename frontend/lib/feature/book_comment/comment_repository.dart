@@ -17,7 +17,7 @@ class CommentRepository {
 
   Future<void> _initializeToken() async {
     final tokenRepository = SecureStorageTokenRepository();
-    final token = await tokenRepository.getToken();
+    final token = await tokenRepository.getToken("auth_token");
     if (token != null) {
       _dio.options.headers['Authorization'] = 'Token $token';
       _dio.options.headers['Content-Type'] = 'application/json';
