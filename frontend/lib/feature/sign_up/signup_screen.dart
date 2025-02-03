@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget{
+  // 정규식 재사용 가능성이 있을때를 고려하면 static이 아니라 따로 클래스를 만드는 게 낫다.
   static final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
   static final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$');
   static final nameRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
@@ -22,9 +23,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
 
-  final apiRepositoryProvider = Provider<ApiRepository>((ref) {
-    return ApiRepository();
-  });
+  // final apiRepositoryProvider = Provider<ApiRepository>((ref) {
+  //   return ApiRepository();
+  // }); apiRepositoryProvider 는 api_repository.dart 에 있어야 함..
 
   @override
   void dispose() {

@@ -2,10 +2,10 @@ import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/dto/signup_dto.dart';
 
-// ApiRepository provider 선언
-final apiRepositoryProvider = Provider<ApiRepository>((ref) {
-  return ApiRepository();
-});
+// // ApiRepository provider 선언
+// final apiRepositoryProvider = Provider<ApiRepository>((ref) {
+//   return ApiRepository();
+// });
 
 final signUpProvider = StateNotifierProvider<SignUpNotifier, SignUpState>((ref) {
   final apiRepository = ref.read(apiRepositoryProvider);
