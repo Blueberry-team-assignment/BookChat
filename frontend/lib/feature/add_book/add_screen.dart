@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+
+import 'package:book_chat/feature/add_book/providers/addbook_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,18 +18,6 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
   final titleController = TextEditingController();
   final keywordController = TextEditingController();
   final descriptionController = TextEditingController();
-  File? selectedImage;
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        selectedImage = File(image.path);
-      });
-    }
-  }
 
   @override
   void dispose() {
@@ -37,9 +26,33 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
     descriptionController.dispose();
     super.dispose();
   }
+  Future<void> _pickImage() async {
+    try {
+      // 이미지 선택
+      await ref.read(addBookProvider.notifier).pickImage();
 
+      // 이미지가 선택되면 업로드 실행
+      final notifier = ref.read(addBookProvider.notifier);
+      if (notifier.state.addBookDto.imgpath != null) {
+        await notifier.uploadBookImg();
+        // 업로드 성공 시 사용자에게 알림
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('이미지가 성공적으로 업로드되었습니다.')),
+        );
+      }
+    } catch (e) {
+      // 에러 발생 시 사용자에게 알림
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    final imagePath = ref.watch(addBookProvider.select((state) => state.addBookDto.imgpath));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("책 등록하기"),
@@ -64,11 +77,11 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: selectedImage != null
+                              child: imagePath != null
                                   ? ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.file(
-                                  selectedImage!,
+                                  File(imagePath),
                                   fit: BoxFit.cover,
                                 ),
                               )
