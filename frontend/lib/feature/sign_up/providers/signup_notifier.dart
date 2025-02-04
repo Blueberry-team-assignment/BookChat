@@ -48,8 +48,12 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
 
       updateSignUpDto(signupDto);
 
-    } catch (e) {
-      print(e);
+    } on ApiException catch (e) {
+      // ApiException의 message와 statusCode를 그대로 전달
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+      );
     }
   }
 }

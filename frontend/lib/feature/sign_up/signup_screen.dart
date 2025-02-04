@@ -1,5 +1,4 @@
-import 'package:book_chat/common/repository/api_repository.dart';
-import 'package:book_chat/dto/signup_dto.dart';
+import 'package:book_chat/feature/sign_up/providers/signup_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -99,16 +98,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 try {
-                  final signUpDto = SignUpDto(
+                  await ref.read(signUpProvider.notifier).signUp(
                     email: emailController.text,
                     password: passwordController.text,
                     name: nameController.text,
                   );
-                  // await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
-                  await ref.read(apiRepositoryProvider).post(
-                    '/bookchat/signup/',
-                    body: signUpDto.toJson(),
-                  );
+
+
+                  // final signUpDto = SignUpDto(
+                  //   email: emailController.text,
+                  //   password: passwordController.text,
+                  //   name: nameController.text,
+                  // );
+                  // // await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+                  // await ref.read(apiRepositoryProvider).post(
+                  //   '/bookchat/signup/',
+                  //   body: signUpDto.toJson(),
+                  // );
+
+
 
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,11 +127,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
                     );
                     Navigator.pop(context);
                   }
-                } on AuthException catch (e) {
+                } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(e.message),
+                        content: Text(e.toString()),
                         backgroundColor: Colors.red,
                       ),
                     );

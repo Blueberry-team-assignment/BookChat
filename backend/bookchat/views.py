@@ -143,7 +143,41 @@ def login(request):
         )
     
     print("Serializer errors:", serializer.errors)  # 유효성 검사 오류
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 시리얼라이저 에러 처리
+    error_messages = {}
+    
+    # 이메일 필드 에러
+    if 'email' in serializer.errors:
+        error_messages['email'] = serializer.errors['email'][0]
+    
+    # 비밀번호 필드 에러
+    if 'password' in serializer.errors:
+        error_messages['password'] = serializer.errors['password'][0]
+        
+    # 이름 필드 에러
+    if 'name' in serializer.errors:
+        error_messages['name'] = serializer.errors['name'][0]
+    
+    # 에러가 있는 경우
+    if error_messages:
+        return Response(
+            {
+                'message': next(iter(error_messages.values())),  # 첫 번째 에러 메시지
+                'field_errors': error_messages  # 상세 필드별 에러
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # 기타 에러
+    return Response(
+        {
+            'message': '요청 처리 중 오류가 발생했습니다',
+            'field_errors': serializer.errors
+        }, 
+        status=status.HTTP_400_BAD_REQUEST
+    )
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
