@@ -9,6 +9,7 @@ class SignUpDto with _$SignUpDto {
     required String email,
     required String password,
     required String name,
+
   }) = _SignUpDto;
 
   factory SignUpDto.fromJson(Map<String, dynamic> json) =>

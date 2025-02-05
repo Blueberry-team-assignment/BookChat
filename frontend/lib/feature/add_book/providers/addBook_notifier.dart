@@ -1,33 +1,30 @@
 import 'package:book_chat/common/repository/api_repository.dart';
-import 'package:book_chat/common/repository/gallery_repository.dart';
 import 'package:book_chat/dto/addbook_dto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final addBookProvider = StateNotifierProvider<AddBookNotifier, AddBookState>((ref){
-  final galleryRepository = ref.read(GalleryRepositoryProvider);
   final apiRepository = ref.read(apiRepositoryProvider);
-  return AddBookNotifier(galleryRepository, apiRepository);
+  return AddBookNotifier(apiRepository);
 });
 
 class AddBookNotifier extends StateNotifier<AddBookState>{
-  final GalleryRepository _galleryRepository;
   final ApiRepository _apiRepository;
 
-  AddBookNotifier(this._galleryRepository, this._apiRepository)
-      : super(AddBookState(
+  AddBookNotifier(this._apiRepository)
+    : super(AddBookState(
       addBookDto: AddBookDto(
-        title: '',
-        keyword: '',
-        des: '',
-        imgpath: null,
-        imgurl: null)
+          title: '',
+          keyword: '',
+          des: '',
+          imgpath: null,
+          imgurl: null)
   ));
 
   void updateAddBookDto(AddBookDto dto){
     state = AddBookState(addBookDto: dto);
   }
 
-  Future<void> uploadBookImg() async {
+  Future<void> uploadImageToStorage()async {
     if (state.addBookDto.imgpath == null) {
       throw ApiException(message: '선택된 이미지가 없습니다.');
     }
@@ -56,9 +53,28 @@ class AddBookNotifier extends StateNotifier<AddBookState>{
     }
   }
 
-  getimagePath() {}
-  pickImage() {}
+  Future<void> addBook({
+    required String title,
+    required String keyword,
+    required String description,
+  }) async {
+    try {
+      final updatedDto = AddBookDto(
+        title: title,
+        keyword: keyword,
+        des: description,
+        imgpath: state.addBookDto.imgpath,
+        imgurl: state.addBookDto.imgurl,
+      );
 
+      await _apiRepository.post(
+        '/bookchat/addbook/',
+        body: updatedDto.toJson(),
+      );
+    } catch (e) {
+      throw ApiException(message: '책 정보 저장 중 오류 발생: $e');
+    }
+  }
 }
 
 class AddBookState{
@@ -67,5 +83,4 @@ class AddBookState{
   AddBookState({
     required this.addBookDto
   });
-
 }

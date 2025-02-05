@@ -1,6 +1,6 @@
 import 'dart:io';
-
-import 'package:book_chat/feature/add_book/providers/addbook_notifier.dart';
+import 'package:book_chat/feature/add_book/providers/getImage_notifier.dart';
+import 'package:book_chat/feature/add_book/providers/addBook_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,32 +26,11 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
     descriptionController.dispose();
     super.dispose();
   }
-  Future<void> _pickImage() async {
-    try {
-      // 이미지 선택
-      await ref.read(addBookProvider.notifier).pickImage();
 
-      // 이미지가 선택되면 업로드 실행
-      final notifier = ref.read(addBookProvider.notifier);
-      if (notifier.state.addBookDto.imgpath != null) {
-        await notifier.uploadBookImg();
-        // 업로드 성공 시 사용자에게 알림
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지가 성공적으로 업로드되었습니다.')),
-        );
-      }
-    } catch (e) {
-      // 에러 발생 시 사용자에게 알림
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    }
-  }
   @override
   Widget build(BuildContext context) {
-    final imagePath = ref.watch(addBookProvider.select((state) => state.addBookDto.imgpath));
+    final imgstate = ref.watch(getImageProvider);
+    final imagePath = imgstate.addBookDto.imgpath;
 
     return Scaffold(
       appBar: AppBar(
@@ -69,7 +48,9 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: _pickImage,
+                          onTap: (){
+                            ref.read(getImageProvider.notifier).getImageFromGallery();
+                          },
                           child: AspectRatio(
                             aspectRatio: 3/4,
                             child: Container(
@@ -148,8 +129,14 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
 
                   // 저장 버튼
                   ElevatedButton(
-                    onPressed: () {
-
+                    onPressed: () async{
+                      // 유효성 검증을 위해 path를 인자로 받지 않고 uploadImageToStorage() 내부에서 한번 더 확인함
+                      ref.read(addBookProvider.notifier).uploadImageToStorage();
+                      await ref.read(addBookProvider.notifier).addBook(
+                        title: titleController.text,
+                        keyword: keywordController.text,
+                        description: descriptionController.text,
+                      );
                     },
                     child: const Text(
                       'Save Book',
