@@ -37,7 +37,7 @@ class AddBookNotifier extends StateNotifier<AddBookState>{
         },
       );
 
-      // 응답에서 이미지 URL을 받아와서 상태 업데이트
+      // 응답에서 이미지 URL을 받아와서 상태 업데이트!
       final updatedDto = AddBookDto(
           title: state.addBookDto.title,
           keyword: state.addBookDto.keyword,
