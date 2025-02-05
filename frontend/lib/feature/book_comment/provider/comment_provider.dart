@@ -1,4 +1,4 @@
-import 'package:book_chat/model/book_comment.dart';
+import 'package:book_chat/model/book_comment_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/feature/book_comment/comment_repository.dart';
 // comment_provider.dart

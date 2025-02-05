@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:book_chat/feature/login/login_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 // 사용자 모델
 class UserModel {
@@ -60,12 +60,10 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
 
   Future<void> loadUserInfo() async {
     state = state.copyWith(isLoading: true);
-
+    final tokenRepository = SecureStorageTokenRepository();
     try {
-      // SharedPreferences에서 저장된 토큰 확인
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-      
+
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         state = state.copyWith(
           error: '로그인이 필요합니다',
@@ -107,7 +105,9 @@ class UserInfoNotifier extends StateNotifier<UserInfoState> {
     state = state.copyWith(userModel: user);
   }
 
-  void logout() {
+  void logout() async{
+    final tokenRepository = SecureStorageTokenRepository();
+    await tokenRepository.deleteToken("auth_token");
     state = UserInfoState();
   }
 }
@@ -131,12 +131,13 @@ class MyPageScreen extends ConsumerStatefulWidget {
 }
 
 class _MyPageScreenState extends ConsumerState<MyPageScreen> {
+  final tokenRepository = SecureStorageTokenRepository();
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() async {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
+      final token = await tokenRepository.getToken("auth_token");
       if (token != null) {
         ref.read(userInfoProvider.notifier).loadUserInfo();
       }

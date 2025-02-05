@@ -1,28 +1,37 @@
+import 'package:book_chat/feature/sign_up/providers/signup_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget{
+  // 정규식 재사용 가능성이 있을때를 고려하면 static이 아니라 따로 클래스를 만드는 게 낫다.
   static final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
   static final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$');
   static final nameRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9]*$');
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  SignUpScreen({super.key});
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen>{
+
   final _formKey = GlobalKey<FormState>();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+
+  // final apiRepositoryProvider = Provider<ApiRepository>((ref) {
+  //   return ApiRepository();
+  // }); apiRepositoryProvider 는 api_repository.dart 에 있어야 함..
 
   @override
   void dispose() {
-    widget.emailController.dispose();
-    widget.passwordController.dispose();
-    widget.nameController.dispose();
+    // 컨트롤러 해제
+    emailController.dispose();
+    passwordController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
@@ -37,7 +46,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
     child: Column(
         children: [
           TextFormField(
-            controller: widget.emailController,
+            controller: emailController,
             decoration: InputDecoration(
               labelText: '이메일',
               hintText: 'example@email.com',
@@ -53,7 +62,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.passwordController,
+            controller: passwordController,
             decoration: InputDecoration(
               labelText: '비밀번호',
               hintText: '8자 이상, 특수문자 포함',
@@ -70,7 +79,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
             },
           ),
           TextFormField(
-            controller: widget.nameController,
+            controller: nameController,
             decoration: const InputDecoration(
               labelText: '이름',
             ),
@@ -86,10 +95,48 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>{
           ),
 
           ElevatedButton(
-            onPressed: (){
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                // 유효성 검사 통과시 처리할 로직
-                print('폼 검증 성공');
+                try {
+                  await ref.read(signUpProvider.notifier).signUp(
+                    email: emailController.text,
+                    password: passwordController.text,
+                    name: nameController.text,
+                  );
+
+
+                  // final signUpDto = SignUpDto(
+                  //   email: emailController.text,
+                  //   password: passwordController.text,
+                  //   name: nameController.text,
+                  // );
+                  // // await ref.read(authRepositoryProvider).signUp(signupDto: signUpDto);
+                  // await ref.read(apiRepositoryProvider).post(
+                  //   '/bookchat/signup/',
+                  //   body: signUpDto.toJson(),
+                  // );
+
+
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('회원가입이 완료되었습니다'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text('가입하기'),

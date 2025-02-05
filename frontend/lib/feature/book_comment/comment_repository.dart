@@ -1,6 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:dio/dio.dart';
-import 'package:book_chat/model/book_comment.dart';
+import 'package:book_chat/model/book_comment_model.dart';
 
 // comment_repository.dart
 class CommentRepository {
@@ -16,8 +16,8 @@ class CommentRepository {
   }
 
   Future<void> _initializeToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken("auth_token");
     if (token != null) {
       _dio.options.headers['Authorization'] = 'Token $token';
       _dio.options.headers['Content-Type'] = 'application/json';

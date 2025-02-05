@@ -1,13 +1,12 @@
 import 'dart:convert';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:book_chat/model/model_book.dart';
+import 'package:book_chat/model/book_model.dart';
 import 'package:book_chat/feature/book_memo/book_memo_screen.dart';
-import 'package:book_chat/feature/chat_rooms/chat_rooms_screen.dart';
 import 'package:book_chat/feature/book_comment/book_comment_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final currentPageProvider = StateProvider<int>((ref)=>0);
 final carouselProvider = StateNotifierProvider<CarouselNotifier, CarouselState>((ref){
@@ -56,8 +55,8 @@ class CarouselNotifier extends StateNotifier<CarouselState> {
 
   // CarouselNotifier 수정
   void initializeState(List<Book> books) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken("auth_token");
     final url = Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/myList/');
 
     try {
@@ -89,8 +88,9 @@ class CarouselNotifier extends StateNotifier<CarouselState> {
   }
 
   Future<void> toggleLike(int index, int bookId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    final tokenRepository = SecureStorageTokenRepository();
+    final token = await tokenRepository.getToken("auth_token");
+
     final url = Uri.parse(
         'https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/book_like/');
 

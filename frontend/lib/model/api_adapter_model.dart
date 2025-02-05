@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'model_book.dart';
+import 'book_model.dart';
 
 List<Book> parseBook(String responseBody){
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();

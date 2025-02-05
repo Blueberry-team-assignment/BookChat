@@ -1,9 +1,11 @@
+import 'package:book_chat/feature/add_book/add_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:book_chat/model/model_book.dart';
+import 'package:book_chat/model/book_model.dart';
 import 'package:book_chat/feature/book_info/book_info_screen.dart';
 
+// 책 등록, 업뎃, 삭제 기능 먼저 만들고 나중에 (중복 방지 등등) 검색이랑 엮기
 class SearchScreen extends StatefulWidget {
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -44,7 +46,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<List<Book>> fetchBooks() async {
     final response = await http.get(
-        Uri.parse('https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/books/'),
+        Uri.parse(
+            'https://drf-bookchat-test-d3b5e19f0ff5.herokuapp.com/bookchat/books/'),
         headers: {
           'Content-Type': 'application/json',
         }
@@ -71,10 +74,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Expanded(
       child: GridView.count(
-        crossAxisCount: 3,  // 한 줄에 3개의 아이템
-        childAspectRatio: 1 / 1.5,  // 아이템의 가로:세로 비율
+        crossAxisCount: 3, // 한 줄에 3개의 아이템
+        childAspectRatio: 1 / 1.5, // 아이템의 가로:세로 비율
         padding: EdgeInsets.all(3),
-        children: searchResults.map((book) => _buildListItem(context, book)).toList(),
+        children: searchResults.map((book) => _buildListItem(context, book))
+            .toList(),
       ),
     );
   }
@@ -92,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
           MaterialPageRoute<void>(
             fullscreenDialog: true,
             builder: (BuildContext context) {
-              return DetailScreen(book: book);  // 상세 화면으로 이동
+              return DetailScreen(book: book); // 상세 화면으로 이동
             },
           ),
         );
@@ -102,36 +106,37 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(30),
-        ),
-        Container(
-          color: Colors.blueGrey,
-          padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: TextField(
-                  focusNode: focusNode,
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                  autofocus: true,
-                  controller: _filter,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white24,
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    suffixIcon: focusNode.hasFocus
-                        ? IconButton(
+    return Scaffold(
+        body: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(30),
+              ),
+              Container(
+                color: Colors.blueGrey,
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 5,
+                      child: TextField(
+                        focusNode: focusNode,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                        autofocus: true,
+                        controller: _filter,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white24,
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          suffixIcon: focusNode.hasFocus
+                              ? IconButton(
                             icon: Icon(
                               Icons.cancel,
                               color: Colors.white,
@@ -144,30 +149,33 @@ class _SearchScreenState extends State<SearchScreen> {
                               });
                             },
                           )
-                        : Container(),
-                    hintText: 'Search',
-                    labelStyle: TextStyle(color: Colors.white),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                  ),
-                ),
-              ),
-              focusNode.hasFocus
-                  ? Expanded(
+                              : Container(),
+                          hintText: 'Search',
+                          labelStyle: TextStyle(color: Colors.white),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  10))),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  10))),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  10))),
+                        ),
+                      ),
+                    ),
+                    focusNode.hasFocus
+                        ? Expanded(
                       child: TextButton(
                         child: Text('Cancel',
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.white,
                             )),
-                        onPressed: (){
+                        onPressed: () {
                           setState(() {
                             _filter.clear();
                             _searchText = "";
@@ -176,15 +184,30 @@ class _SearchScreenState extends State<SearchScreen> {
                         },
                       ),
                     )
-                  : Expanded(
+                        : Expanded(
                       flex: 0,
                       child: Container(),
                     )
+                  ],
+                ),
+              ),
+              _buildBody(context),
             ],
           ),
         ),
-        _buildBody(context),
-      ],
-    ));
+        floatingActionButton: FloatingActionButton( // 추가
+        onPressed: ()
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddBookScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
   }
+
 }

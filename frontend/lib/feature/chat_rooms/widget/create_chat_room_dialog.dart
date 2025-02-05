@@ -1,8 +1,8 @@
 // lib/feature/chat_rooms/widget/create_chat_room_dialog.dart
 import 'dart:convert';
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateChatRoomDialog extends StatefulWidget {
   final String bookId;
@@ -34,9 +34,8 @@ class _CreateChatRoomDialogState extends State<CreateChatRoomDialog> {
     });
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-      
+      final tokenRepository = SecureStorageTokenRepository();
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         throw Exception('Authentication token not found');
       }

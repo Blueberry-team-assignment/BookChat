@@ -1,4 +1,4 @@
-// lib/model/chat_message.dart
+// lib/model/chat_message_model.dart
 class ChatMessage {
   final int id;
   final String content;

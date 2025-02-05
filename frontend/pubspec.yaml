@@ -30,28 +30,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod:
-  riverpod_annotation:
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
   freezed_annotation: ^2.4.1
-  carousel_slider:
-  http:
+  carousel_slider: ^5.0.0
+  http: ^1.2.2
   web_socket_channel: ^3.0.1
   djangoflow_chat: ^0.2.0+1
   djangoflow_openapi: ^0.1.22
   json_annotation: ^4.8.1
-  shared_preferences:
+  flutter_secure_storage: ^9.0.0
   dio: ^5.4.0
   intl: ^0.19.0
+  image_picker: ^1.1.2
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  riverpod_generator:
+  riverpod_generator: ^2.6.3
   build_runner: ^2.4.8
   freezed: ^2.4.6
   json_serializable: ^6.7.1
@@ -78,6 +80,7 @@ flutter:
   assets:
     - images/
     - images/nousb.png
+    - .env
   #  - images/beasts_of_a_little_land.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

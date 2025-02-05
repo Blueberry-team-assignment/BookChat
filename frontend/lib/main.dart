@@ -4,8 +4,13 @@ import 'package:book_chat/feature/login/login_screen.dart';
 import 'package:book_chat/feature/my_page/my_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:book_chat/feature/book_home/book_talk_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';  // Riverpod import 추가
-void main() {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+Future<void> main() async {
+
+  await dotenv.load(fileName: ".env");
+
   runApp(
     ProviderScope(
       child: MyApp(),

@@ -1,12 +1,12 @@
 // lib/screen/chat_rooms_screen.dart
 import 'dart:convert';
 
+import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:book_chat/feature/chat_rooms/widget/create_chat_room_dialog.dart';
 import 'package:book_chat/feature/chat_screen/chat_screen.dart';
-import 'package:book_chat/model/chat_room.dart';
+import 'package:book_chat/model/chat_room_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 // lib/screen/chat_rooms_screen.dart
 class ChatRoomsScreen extends StatefulWidget {
@@ -33,9 +33,8 @@ class _ChatRoomsScreenState extends State<ChatRoomsScreen> {
 
   Future<void> _loadChatRooms() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-      
+      final tokenRepository = SecureStorageTokenRepository();
+      final token = await tokenRepository.getToken("auth_token");
       if (token == null) {
         throw Exception('Authentication token not found');
       }
