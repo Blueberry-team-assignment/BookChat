@@ -59,7 +59,15 @@ class LoginSerializer(serializers.Serializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.name', read_only=True)
-    
+    replies = serializers.SerializerMethodField()
+    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False, allow_null=True)
+
+
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'user_name', 'created_at']
+        fields = ['id', 'content', 'user_name', 'created_at', 'parent', 'replies']
+
+    def get_replies(self, obj):
+        if hasattr(obj, 'replies'):
+            return CommentSerializer(obj.replies.all(), many=True).data
+        return []

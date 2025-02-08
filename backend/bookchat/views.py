@@ -270,7 +270,7 @@ def get_user_info(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_comments(request, book_id):
-    comments = Comment.objects.filter(book_id=book_id)
+    comments = Comment.objects.filter(book_id=book_id, parent=None).prefetch_related('replies')
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
@@ -279,7 +279,18 @@ def get_comments(request, book_id):
 def create_comment(request, book_id):
     try:
         book = Book.objects.get(id=book_id)
-        serializer = CommentSerializer(data=request.data)
+        parent_id = request.data.get('parent_id')
+        
+        data = request.data.copy()
+        if parent_id:
+            try:
+                parent_comment = Comment.objects.get(id=parent_id)
+                data['parent'] = parent_comment.id
+            except Comment.DoesNotExist:
+                return Response({'error': 'Parent comment not found'}, status=404)
+
+
+        serializer = CommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save(book=book, user=request.user)
             return Response(serializer.data, status=201)

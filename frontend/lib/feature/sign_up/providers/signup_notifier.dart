@@ -1,6 +1,6 @@
 import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:book_chat/dto/signup_dto.dart';
+import 'package:book_chat/models/signup_model.dart';
 
 // // ApiRepository provider 선언
 // final apiRepositoryProvider = Provider<ApiRepository>((ref) {

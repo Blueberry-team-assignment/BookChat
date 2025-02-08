@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:book_chat/common/repository/api_repository.dart';
-import 'package:book_chat/dto/addbook_dto.dart';
+import 'package:book_chat/models/addbook_model.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -65,7 +65,6 @@ class AddBookNotifier extends StateNotifier<AddBookState>{
           des: state.addBookDto.des,
           imgpath: state.addBookDto.imgpath,
           imgurl: response.secureUrl  // Cloudinary에서 받은 URL 사용
-          // imgurl: response['imageUrl'] // API 응답에서 이미지 URL을 가져옴
       );
 
       updateAddBookDto(updatedDto);

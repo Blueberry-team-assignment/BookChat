@@ -1,7 +1,9 @@
 import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:book_chat/common/repository/token_repository.dart';
-import 'package:book_chat/model/book_comment_model.dart';
+import 'package:book_chat/models/bookcomment_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final replyingToProvider = StateProvider<int?>((ref)=>null);
 
 final commentServiceProvider = Provider<CommentService>((ref){
   final apiRepository = ref.watch(apiRepositoryProvider);
@@ -35,6 +37,11 @@ class CommentService{
       );
 
       print('Comments API Response: $response'); // 디버깅용 로그 추가
+      // null 체크 추가
+      if (response == null) {
+        return []; // Return empty list instead of throwing error
+      }
+
       return (response as List).map((json) => Comment.fromJson(json)).toList();
     } catch (e) {
       print('Comments Error: $e'); //
@@ -42,14 +49,19 @@ class CommentService{
     }
   }
 
-  Future<Comment> createComment(String bookId, String content) async{
+  Future<Comment> createComment(String bookId, String content, {int? parentId}) async{
     try {
       final token = await _tokenRepository.getToken("auth_token");
-      final headers = token != null ? {'Authorization': 'Token $token'} : null;
+      final headers = token != null ? {
+        'Authorization': 'Token $token'} : null;
+      final body = {
+        'content': content,
+        if (parentId != null) 'parent_id': parentId,
+      };
 
       final response = await _apiRepository.post(
         '/bookchat/books/$bookId/comments/create/',
-        body: {'content': content},
+        body: body,
         headers: headers,
       );
       return Comment.fromJson(response);
@@ -64,8 +76,10 @@ class CreateCommentNotifier extends StateNotifier<AsyncValue<void>> {
 
   CreateCommentNotifier(this._commentService): super(const AsyncValue.data(null));
 
-  Future<void> createComment(String bookId, String content) async {
+  Future<void> createComment(String bookId, String content, {int? parentId}) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(()=> _commentService.createComment(bookId, content));
+    state = await AsyncValue.guard(() =>
+        _commentService.createComment(bookId, content, parentId: parentId)  // parentId 파라미터 추가
+    );
   }
 }
