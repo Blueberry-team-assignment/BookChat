@@ -1,5 +1,21 @@
 from django.urls import path, include
-from .views import helloAPI, randomBook, save_memo, get_memo, allBooks, change_mylist, randomBook_myList, login, get_users, get_user_info, get_comments, create_comment, signup
+from .views import (
+    helloAPI,
+    randomBook,
+    save_memo,
+    get_memo,
+    allBooks,
+    change_mylist,
+    randomBook_myList,
+    login,
+    get_users,
+    get_user_info,
+    get_comments,
+    create_comment,
+    signup,
+    upload_image,
+    add_book
+)
 from . import views
 from rest_framework.routers import DefaultRouter  # 이 줄 추가
 
@@ -21,4 +37,6 @@ urlpatterns = [
     path('books/<int:book_id>/comments/', get_comments),
     path('books/<int:book_id>/comments/create/', create_comment),
     path('signup/', signup),
+    path('upload_image/', upload_image),
+    path('add_book/', add_book)
 ]

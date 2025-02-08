@@ -13,12 +13,16 @@ class User(AbstractUser):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     keyword = models.CharField(max_length=255)
-    poster = models.ImageField()
+    # poster = models.ImageField()
+    poster = models.URLField(max_length=500)
     liked_by = models.ManyToManyField(User, related_name='liked_books', blank=True)
     description = models.TextField(blank=True, null=True)
-
+    
     def get_poster_url(self):
+        if isinstance(self.poster, str):  # 이미 URL 문자열인 경우
+            return self.poster
         return self.poster.url if self.poster else None
+        # return self.poster.url if self.poster else None
 
 class BookMemo(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

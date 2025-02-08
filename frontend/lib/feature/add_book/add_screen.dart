@@ -18,6 +18,7 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
   final titleController = TextEditingController();
   final keywordController = TextEditingController();
   final descriptionController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -36,7 +37,9 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
       appBar: AppBar(
         title: const Text("책 등록하기"),
       ),
-      body: Form(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Form(
         child: Column(
           children: [
             Stack(
@@ -129,14 +132,31 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
 
                   // 저장 버튼
                   ElevatedButton(
-                    onPressed: () async{
-                      // 유효성 검증을 위해 path를 인자로 받지 않고 uploadImageToStorage() 내부에서 한번 더 확인함
-                      ref.read(addBookProvider.notifier).uploadImageToStorage();
-                      await ref.read(addBookProvider.notifier).addBook(
-                        title: titleController.text,
-                        keyword: keywordController.text,
-                        description: descriptionController.text,
-                      );
+                    onPressed: _isLoading ? null : () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        // 유효성 검증을 위해 path를 인자로 받지 않고 uploadImageToStorage() 내부에서 한번 더 확인함
+                        // path 를 인자로 넣어서 notifier로 넘어가야 함. UI에서는 상태 업데이트 불가
+                        final imagePath = ref
+                            .read(getImageProvider)
+                            .addBookDto
+                            .imgpath;
+                        await ref.read(addBookProvider.notifier)
+                            .uploadImageToStorage(imagePath);
+
+                        await ref.read(addBookProvider.notifier).addBook(
+                          title: titleController.text,
+                          keyword: keywordController.text,
+                          description: descriptionController.text,
+                        );
+                        Navigator.pop(context);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      } finally {
+                        if (mounted) setState(() => _isLoading = false);
+                      }
                     },
                     child: const Text(
                       'Save Book',
