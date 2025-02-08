@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:book_chat/common/repository/api_repository.dart';
 import 'package:book_chat/common/repository/token_repository.dart';
 import 'package:book_chat/models/bookcomment_model.dart';
@@ -12,6 +14,14 @@ final commentServiceProvider = Provider<CommentService>((ref){
 });
 
 final commentsProvider = FutureProvider.family<List<Comment>, String>((ref, bookId) async{
+  Timer? timer;
+
+  ref.onDispose(() => timer?.cancel()); // Provider 내부에서 자동 갱신 로직 처리
+
+  timer = Timer.periodic(Duration(seconds: 3), (_) async {
+  ref.invalidateSelf();  // Provider 자신을 갱신
+  });
+
   final commentService = ref.watch(commentServiceProvider);
   return commentService.getComments(bookId);
 });

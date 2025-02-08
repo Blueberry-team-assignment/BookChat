@@ -18,14 +18,14 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   Timer? _timer;
 
-  @override
-  void initState() {
-    super.initState();
-    // 3초마다 자동으로 댓글 목록을 새로고침하는 타이머 설정
-    _timer = Timer.periodic(Duration(seconds: 3), (_) {
-      ref.refresh(commentsProvider(widget.bookId));
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // 3초마다 자동으로 댓글 목록을 새로고침하는 타이머 설정
+  //   _timer = Timer.periodic(Duration(seconds: 3), (_) {
+  //     ref.refresh(commentsProvider(widget.bookId));
+  //   });
+  // }
 
   @override
   void dispose() {
