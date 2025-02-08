@@ -10,6 +10,21 @@ final apiRepositoryProvider = Provider<ApiRepository>((ref) {
 class ApiRepository {
   static var baseUrl = dotenv.env['BASE_URL'];
 
+  Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
+    final defaultHeaders = {
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: {...defaultHeaders, ...?headers},
+      );
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('API 요청 중 오류 발생: $e');
+    }
+  }
   Future<dynamic> post(String endpoint, {required dynamic body, Map<String, String>? headers,}) async {
     final defaultHeaders = {
       'Content-Type': 'application/json',
