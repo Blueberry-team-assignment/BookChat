@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-part 'addbook_dto.freezed.dart';
-part 'addbook_dto.g.dart';
+part 'addbook_model.freezed.dart';
+part 'addbook_model.g.dart';
 
 @freezed
 class AddBookDto with _$AddBookDto {
