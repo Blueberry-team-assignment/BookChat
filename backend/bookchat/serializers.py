@@ -14,7 +14,10 @@ class BookSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return request.user in obj.liked_by.all()
         return False
+    
     def get_poster_url(self, obj):
+        if isinstance(obj.poster, str):  # 이미 URL 문자열인 경우
+            return obj.poster
         return obj.get_poster_url()
 
 class UserSerializer(serializers.ModelSerializer):

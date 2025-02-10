@@ -10,6 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from bookchat.models import User  #
 from df_chat.drf.viewsets import RoomViewSet
 from rest_framework.authentication import TokenAuthentication
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 class CustomRoomViewSet(RoomViewSet):
     authentication_classes = [TokenAuthentication]
@@ -39,6 +42,78 @@ def allBooks(request):
     serializer = BookSerializer(totalBooks, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+def upload_image(request):
+    try:
+        if 'image' not in request.FILES:
+            return Response({
+                'error': '이미지 파일이 제공되지 않았습니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        image_file = request.FILES['image']
+        file_path = f'bookchat/{image_file.name}'
+
+        path = default_storage.save(file_path, image_file)
+        
+        # 저장된 파일의 URL 가져오기
+        image_url = default_storage.url(path)
+
+        return Response({
+            'imageUrl': image_url,
+            'message': '이미지가 성공적으로 업로드되었습니다.'
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(f"Image upload error: {str(e)}")
+        return Response({
+            'error': f'이미지 업로드 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+def add_book(request):
+    try:
+        # 필수 필드 확인
+        title = request.data.get('title')
+        keyword = request.data.get('keyword')
+        description = request.data.get('des')
+        image_url = request.data.get('imgurl')
+        print("Received image URL:", image_url, flush=True)
+
+        if not title or not keyword:
+            return Response({
+                'error': '제목과 키워드는 필수 입력 항목입니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not image_url:
+            return Response({
+                'error': '이미지 URL이 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # file_path = image_url.split('/media/')[-1].split('?')[0] 
+        # print("Received file path:", file_path, flush=True)
+        # Cloudinary에서 이미 업로드된 이미지 URL을 poster 필드에 저장
+        book = Book(
+            title=title,
+            keyword=keyword,
+            description=description,
+            poster=image_url 
+        )
+        
+        # Cloudinary URL을 직접 ImageField에 할당
+        book.save()
+
+        return Response({
+            'message': '책이 성공적으로 추가되었습니다.',
+            'id': book.id,
+            'title': book.title,
+            'poster_url': book.get_poster_url()
+        }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        print(f"Error adding book: {str(e)}")
+        return Response({
+            'error': f'책 추가 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['POST'])
 def save_memo(request):
     try:
