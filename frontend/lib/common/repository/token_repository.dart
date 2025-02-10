@@ -1,4 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final tokenRepositoryProvider = Provider<TokenRepository>((ref){
+  return SecureStorageTokenRepository();
+});
 
 abstract class TokenRepository {
   Future<void> setToken(String key, String token);

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'signup_dto.freezed.dart';
-part 'signup_dto.g.dart';
+part 'signup_model.freezed.dart';
+part 'signup_model.g.dart';
 
 @freezed
 class SignUpDto with _$SignUpDto {

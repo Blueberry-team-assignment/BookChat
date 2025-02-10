@@ -1,5 +1,5 @@
 import 'package:book_chat/common/repository/gallery_repository.dart';
-import 'package:book_chat/dto/addbook_dto.dart';
+import 'package:book_chat/models/addbook_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getImageProvider = StateNotifierProvider<GetImageNotifier, AddBookState>((ref){
