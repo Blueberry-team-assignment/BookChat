@@ -1,7 +1,8 @@
+import 'package:book_chat/feature/book_comment/provider/readComments_notifier.dart';
+import 'package:book_chat/feature/book_comment/provider/writeComment_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:book_chat/feature/book_comment/provider/comment_provider.dart';
 import 'dart:async';
 
 // comment_screen.dart
@@ -37,8 +38,8 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final comments = ref.watch(commentsProvider(widget.bookId));
-    final createCommentState = ref.watch(createCommentProvider);
+    final comments = ref.watch(commentsReadProvider(widget.bookId));
+    final createCommentState = ref.watch(commentWriteProvider);
     final replyingTo = ref.watch(replyingToProvider); // 답글 작성 중인 댓글 ID
 
     return Scaffold(
@@ -88,11 +89,11 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                                 icon: Icon(Icons.send),
                                 onPressed: () async {
                                   if (_commentController.text.isEmpty) return;
-                                  await ref.read(createCommentProvider.notifier)
+                                  await ref.read(commentWriteProvider.notifier)
                                       .createComment(widget.bookId, _commentController.text, parentId: replyingTo);
                                   _commentController.clear();
                                   ref.read(replyingToProvider.notifier).state = null;
-                                  ref.refresh(commentsProvider(widget.bookId));
+                                  ref.refresh(commentsReadProvider(widget.bookId));
                                 },
                               ),
                             ],
@@ -145,12 +146,12 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                       ? null
                       : () async {
                     if (_commentController.text.isEmpty) return;
-                    await ref.read(createCommentProvider.notifier).createComment(
+                    await ref.read(commentWriteProvider.notifier).createComment(
                       widget.bookId,  // Change here
                       _commentController.text,
                     );
                     _commentController.clear();
-                    ref.refresh(commentsProvider(widget.bookId));  // And here
+                    ref.refresh(commentsReadProvider(widget.bookId));  // And here
                   },
                   child: createCommentState.isLoading
                       ? const SizedBox(
